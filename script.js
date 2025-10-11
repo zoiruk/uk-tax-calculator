@@ -539,21 +539,21 @@ function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWor
     const isRefund = refund > 0;
     const resultAmount = Math.abs(refund);
 
-    const message = `🕵️‍♂️ Анонимный пользователь получил расчёт возврата налога
+    const message = `🕵️‍♂️ Anonim foydalanuvchi soliq qaytarilishi hisob-kitobini oldi
 
-📈 Детали:
-• Доход: £${income.toLocaleString()}
-• Удержанный налог: £${taxPaid.toLocaleString()}
-• Период: ${monthsWorked} месяцев
-• Агент: ${agentOperator || 'Не указан'}
+📈 Tafsilotlar:
+• Daromad: £${income.toLocaleString()}
+• Ushlab qolingan soliq: £${taxPaid.toLocaleString()}
+• Davr: ${monthsWorked} месяцев
+• Agent: ${agentOperator || 'Не указан'}
 
-💰 Результат: ${isRefund ? `Возврат налога — £${resultAmount.toLocaleString()}` : `Доплата — £${resultAmount.toLocaleString()}`}
+💰 Natija: ${isRefund ? `Soliq qaytarilishi — £${resultAmount.toLocaleString()}` : `Qo'shimcha to'lov — £${resultAmount.toLocaleString()}`}
 
-⚠️ Важно: Этот расчёт является предварительным. Окончательная сумма будет подтверждена HMRC (Налоговой службой Великобритании).
+⚠️ Muhim: Bu hisob-kitob faqat taxminiy. Aniq summa HMRC (Buyuk Britaniya Soliq Xizmati) tomonidan tasdiqlanadi.
 
-📢 Нужна помощь? White Tax Returns — официально зарегистрированное налоговое агентство, являющееся бухгалтерским отделом операторов Fruitful Jobs и Agri HR.
+📢 Yordam kerakmi? White Tax Returns — rasmiy ro‘yxatdan o‘tgan soliq agentligi, Fruitful Jobs va Agri HR operatorlarining rasmiy buxgalteriya bo‘limidir.
 
-📎 Подать заявку: 👉 whitetax.site/uzbekistan`;
+📎 Ariza topshirish uchun: 👉 whitetax.site/uzbekistan`;
 
     return message;
 }

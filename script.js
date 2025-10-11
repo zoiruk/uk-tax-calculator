@@ -403,7 +403,7 @@ async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWor
             reply_markup: {
                 inline_keyboard: [[
                     {
-                        text: "🧮 Рассчитать свой налог",
+                        text: "🧮 Soliqingizni hisoblang",
                         url: "https://t.me/ZoirUKBot/SoliqHisoblagich"
                     }
                 ]]
@@ -615,4 +615,5 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+
 

@@ -379,7 +379,7 @@ async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWor
     try {
         // Конфигурация Telegram бота
         const TELEGRAM_BOT_TOKEN = '7558545607:AAGN832lBrc0nnRSzDLEVD8BI5otL9Oi-2c';
-        const TELEGRAM_CHAT_ID = '-1002925530891'; // Попробуем и положительный и отрицательный ID
+        const TELEGRAM_CHAT_ID = '-1001848996738'; // Попробуем и положительный и отрицательный ID
 
         console.log('🚀 Начинаем отправку в Telegram...');
         console.log('📱 Chat ID:', TELEGRAM_CHAT_ID);
@@ -615,5 +615,6 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+
 
 

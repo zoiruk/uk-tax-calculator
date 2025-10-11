@@ -211,7 +211,7 @@ function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, age
     document.getElementById('results').classList.remove('hidden');
 
     // Отправляем анонимный результат в Telegram
-    sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWorked, agentOperator);
+    sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName);
 
     // Отправляем данные в Google Sheets для аналитики
     sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear);
@@ -375,7 +375,7 @@ function autoCalculate() {
 }
 
 // Функция для отправки результата в Telegram
-async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWorked, agentOperator) {
+async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName) {
     try {
         // Конфигурация Telegram бота
         const TELEGRAM_BOT_TOKEN = '7558545607:AAGN832lBrc0nnRSzDLEVD8BI5otL9Oi-2c';
@@ -388,7 +388,7 @@ async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWor
         const currentLang = localStorage.getItem('selectedLanguage') || 'ru';
 
         // Создаем интересное сообщение
-        const message = generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, currentLang);
+        const message = generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName, currentLang);
 
         console.log('📝 Сообщение:', message);
 
@@ -503,7 +503,7 @@ async function testTelegramBot() {
     }
 
     // Теперь попробуем отправить тестовое сообщение
-    await sendResultToTelegram(15000, 1500, 1200, 300, 6, 'Test Agent');
+    await sendResultToTelegram(15000, 1500, 1200, 300, 6, 'Test Agent', 'Test Company');
 }
 
 // Функция для получения Chat ID
@@ -535,17 +535,18 @@ async function getChatId() {
 }
 
 // Функция для генерации сообщения в Telegram
-function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, currentLang) {
+function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName, currentLang) {
     const isRefund = refund > 0;
     const resultAmount = Math.abs(refund);
 
     const message = `🕵️‍♂️ Anonim foydalanuvchi soliq qaytarilishi hisob-kitobini oldi
 
 📈 Tafsilotlar:
+• Kompaniya/Ferma: ${companyName || 'Ko\'rsatilmagan'}
 • Daromad: £${income.toLocaleString()}
 • Ushlab qolingan soliq: £${taxPaid.toLocaleString()}
-• Davr: ${monthsWorked} месяцев
-• Agent: ${agentOperator || 'Не указан'}
+• Ishlagan muddat: ${monthsWorked} oy
+• Agent: ${agentOperator || 'Ko\'rsatilmagan'}
 
 💰 Natija: ${isRefund ? `Soliq qaytarilishi — £${resultAmount.toLocaleString()}` : `Qo'shimcha to'lov — £${resultAmount.toLocaleString()}`}
 
@@ -562,7 +563,7 @@ function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWor
 async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear) {
     try {
         // URL вашего Google Apps Script веб-приложения
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkbkTCVml0Ll1XD92iril8EtyIoWf9pPVVoMFJie-6tHjR3vepYM1elhQInrAyhaDX/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxnTi13NXwBuRp1iwyi8osomH-fPlX0LSz6iFseAnUbUK2wCzhgEuyyBqSW6WUe-hPCuw/exec';
 
         const data = {
             income: income,
@@ -601,7 +602,7 @@ async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOp
 // Функция для быстрого тестирования отправки сообщения
 async function testQuickMessage() {
     console.log('🧪 Быстрый тест отправки сообщения...');
-    await sendResultToTelegram(25000, 2500, 3000, -500, 8, 'Test Agent');
+    await sendResultToTelegram(25000, 2500, 3000, -500, 8, 'Test Agent', 'Test Company');
 }
 
 // Функция для тестирования Google Sheets
@@ -615,6 +616,3 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
-
-
-

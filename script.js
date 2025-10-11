@@ -539,7 +539,7 @@ function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWor
     const isRefund = refund > 0;
     const resultAmount = Math.abs(refund);
 
-    const message = `🕵️‍♂️ Anonim foydalanuvchi soliq qaytarilishi hisob-kitobini oldi
+    const message = `🕵️‍♂️ Anonim foydalanuvchi mumkin bo'lgan soliq qaytimini hisoblab chiqdi.
 
 📈 Tafsilotlar:
 • Kompaniya/Ferma: ${companyName || 'Ko\'rsatilmagan'}
@@ -616,3 +616,4 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+

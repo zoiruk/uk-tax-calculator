@@ -379,7 +379,7 @@ function autoCalculate() {
 async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName) {
     try {
         // !!! ВАЖНО: Используем ваш актуальный URL Google Apps Script, который вы используете для Sheets
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqqvhpZcYe7rApKLeO6f9V-kaMgW109JWEb7YJldVszRsOPJjhmTL64YDM4OpelClHnQ/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyuGFIlhHvQg0hzVB_Is9uUcpaW0NFbTFy7hgxq_R9VBy-ml79Ao-CCWQyZbm24KnfBzA/exec';
 
         console.log('🚀 Начинаем отправку в Telegram через GAS Прокси...');
 
@@ -612,6 +612,7 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+
 
 
 

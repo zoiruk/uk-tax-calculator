@@ -617,8 +617,41 @@ async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOp
     }
 }
 
+// Функция для быстрого тестирования отправки сообщения
+async function testQuickMessage() {
+    console.log('🧪 Быстрый тест Telegram...');
+    // Используйте тестовые данные
+    const income = 18000;
+    const taxPaid = 2200;
+    const refund = 1000;
+    const monthsWorked = 6;
+    const agentOperator = 'Quick Test Agent';
+    const companyName = 'Quick Test Co';
+
+    // Вызываем основную функцию отправки в Telegram
+    // Внимание: taxPaid - refund — это примерная сумма TotalTax
+    await sendResultToTelegram(income, taxPaid - refund, taxPaid, refund, monthsWorked, agentOperator, companyName);
+}
+
+// Функция для тестирования Google Sheets
+async function testGoogleSheets() {
+    console.log('📊 Тестируем Google Sheets...');
+    // Используйте тестовые данные
+    const income = 20000;
+    const taxPaid = 2500;
+    const refund = 1200;
+    const monthsWorked = 7;
+    const agentOperator = 'Sheets Test Agent';
+    const companyName = 'Sheets Test Co';
+    const taxYear = '2024-25';
+
+    // Вызываем основную функцию отправки в Google Sheets
+    await sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear);
+}
+
 // Добавляем функции в глобальную область для тестирования
 window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+

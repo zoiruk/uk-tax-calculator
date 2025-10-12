@@ -146,8 +146,7 @@ function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, age
     // Обновляем информацию о работе
     // Получаем текущий язык для переводов
     const currentLang = localStorage.getItem('selectedLanguage') || 'ru';
-    // Предполагаем, что translations определена где-то еще, если нет, используем заглушку
-    const notSpecifiedText = typeof translations !== 'undefined' && translations[currentLang]?.not_specified || 'Не указано'; 
+    const notSpecifiedText = translations[currentLang]?.not_specified || 'Не указано';
 
     document.getElementById('summaryCompany').textContent = companyName || notSpecifiedText;
     document.getElementById('summaryAgent').textContent = agentOperator || notSpecifiedText;
@@ -375,75 +374,93 @@ function autoCalculate() {
     }
 }
 
-// Функция для отправки результата в Telegram (ЧЕРЕЗ GAS ПРОКСИ)
+// Функция для отправки результата в Telegram
 async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName) {
     try {
-        // !!! ВАЖНО: Используем ваш актуальный URL Google Apps Script, который вы используете для Sheets
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqqvhpZcYe7rApKLeO6f9V-kaMgW109JWEb7YJldVszRsOPJjhmTL64YDM4OpelClHnQ/exec';
+        // Конфигурация Telegram бота
+        const TELEGRAM_BOT_TOKEN = '7558545607:AAGN832lBrc0nnRSzDLEVD8BI5otL9Oi-2c';
+        const TELEGRAM_CHAT_ID = '-1001848996738'; // Попробуем и положительный и отрицательный ID
 
-        console.log('🚀 Начинаем отправку в Telegram через GAS Прокси...');
+        console.log('🚀 Начинаем отправку в Telegram...');
+        console.log('📱 Chat ID:', TELEGRAM_CHAT_ID);
 
+        // Получаем текущий язык для локализации
         const currentLang = localStorage.getItem('selectedLanguage') || 'ru';
+
+        // Создаем интересное сообщение
         const message = generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName, currentLang);
 
-        // Создаем reply_markup как JSON-строку для передачи через form-urlencoded
-        const replyMarkup = JSON.stringify({
-            inline_keyboard: [[
-                {
-                    text: "🧮 Soliqingizni hisoblang",
-                    url: "https://t.me/ZoirUKBot/SoliqHisoblagich"
-                }
-            ]]
-        });
+        console.log('📝 Сообщение:', message);
 
-        // Данные для отправки в Google Apps Script
-        const dataToSend = {
-            // КЛЮЧЕВОЙ МОМЕНТ: сообщаем GAS, что это запрос для Telegram
-            type: 'telegram',
-            message: message,
-            replyMarkup: replyMarkup
+        // Отправляем сообщение в Telegram
+        const telegramUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+        console.log('🌐 URL:', telegramUrl);
+
+        const requestBody = {
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            disable_web_page_preview: true,
+            reply_markup: {
+                inline_keyboard: [[
+                    {
+                        text: "🧮 Soliqingizni hisoblang",
+                        url: "https://t.me/ZoirUKBot/SoliqHisoblagich"
+                    }
+                ]]
+            }
         };
 
-        // Преобразуем данные в формат x-www-form-urlencoded
-        const formData = new URLSearchParams(dataToSend).toString();
+        console.log('📦 Тело запроса:', requestBody);
 
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
+        const response = await fetch(telegramUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: formData
+            body: JSON.stringify(requestBody)
         });
 
-        // --- ИСПРАВЛЕННЫЙ БЛОК ДЛЯ sendResultToTelegram ---
-        const responseText = await response.text();
-        // Устанавливаем результат по умолчанию на случай, если ответ пуст или нечитаем
-        let result = { success: false, error: "Неизвестная ошибка или пустой ответ." }; 
-        
-        try {
-            // Пытаемся распарсить ответ как JSON
-            result = JSON.parse(responseText);
-        } catch (e) {
-            // Если парсинг не удался (например, пришел HTML/ошибка)
-             if (response.ok) {
-                 // Если HTTP статус OK (200), считаем успехом, но предупреждаем
-                 result.success = true;
-                 result.error = "Успех, но ответ GAS не в формате JSON.";
-             } else {
-                 // Если HTTP статус не OK и не JSON, записываем весь ответ как ошибку
-                 result.error = responseText || 'Неизвестная ошибка сети.';
-             }
-        }
-        
-        if (result.success) {
-            console.log('✅ Результат успешно отправлен в Telegram через GAS Прокси.');
-        } else {
-            console.log('⚠️ Ошибка отправки в Telegram через GAS Прокси:', result.error);
-        }
-// --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА ---
+        console.log('📡 Статус ответа:', response.status);
 
+        const responseData = await response.json();
+        console.log('📄 Ответ от Telegram:', responseData);
+
+        if (response.ok) {
+            console.log('✅ Результат успешно отправлен в Telegram');
+        } else {
+            console.log('⚠️ Ошибка отправки в Telegram:', response.status, responseData);
+
+            // Если Chat ID неправильный, попробуем с отрицательным
+            if (responseData.error_code === 400 && responseData.description.includes('chat not found')) {
+                console.log('🔄 Пробуем с отрицательным Chat ID...');
+                const negativeChatId = `-${TELEGRAM_CHAT_ID}`;
+
+                const retryResponse = await fetch(telegramUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: negativeChatId,
+                        text: message,
+                        disable_web_page_preview: true,
+                        reply_markup: {
+                            inline_keyboard: [[
+                                {
+                                    text: "🧮 Рассчитать свой налог",
+                                    url: "https://t.me/ZoirUKBot/SoliqHisoblagich"
+                                }
+                            ]]
+                        }
+                    })
+                });
+
+                const retryData = await retryResponse.json();
+                console.log('🔄 Повторный ответ:', retryData);
+            }
+        }
     } catch (error) {
-        console.log('❌ Общая ошибка при отправке в Telegram:', error);
+        console.log('❌ Ошибка при отправке в Telegram:', error);
     }
 }
 
@@ -464,19 +481,36 @@ function getLanguageFlag(lang) {
 async function testTelegramBot() {
     console.log('🧪 Тестируем Telegram бота...');
 
-    // Токен бота удален из соображений безопасности. 
-    // Прямая проверка getMe на клиенте больше невозможна.
+    const TELEGRAM_BOT_TOKEN = '7558545607:AAGN832lBrc0nnRSzDLEVD8BI5otL9Oi-2c';
 
-    // Теперь попробуем отправить тестовое сообщение через GAS прокси
+    // Сначала проверим информацию о боте
+    try {
+        const botInfoUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`;
+        const botResponse = await fetch(botInfoUrl);
+        const botData = await botResponse.json();
+
+        console.log('🤖 Информация о боте:', botData);
+
+        if (botData.ok) {
+            console.log('✅ Бот активен:', botData.result.username);
+        } else {
+            console.log('❌ Проблема с ботом:', botData);
+            return;
+        }
+    } catch (error) {
+        console.log('❌ Ошибка при проверке бота:', error);
+        return;
+    }
+
+    // Теперь попробуем отправить тестовое сообщение
     await sendResultToTelegram(15000, 1500, 1200, 300, 6, 'Test Agent', 'Test Company');
 }
 
 // Функция для получения Chat ID
 async function getChatId() {
-    // Токен бота удален из соображений безопасности. Эта функция больше не будет работать.
+    const TELEGRAM_BOT_TOKEN = '7558545607:AAGN832lBrc0nnRSzDLEVD8BI5otL9Oi-2c';
 
     try {
-        // TELEGRAM_BOT_TOKEN не определен
         const updatesUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates`;
         const response = await fetch(updatesUrl);
         const data = await response.json();
@@ -531,7 +565,7 @@ function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWor
 async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear) {
     try {
         // Убедитесь, что здесь указан ваш актуальный URL
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQBvijZDcUBVyPiOeM05XFn7t_wJfBlS6v6IFJ8pJB90j6QKL9S1oHbk-MoC5LC5s8PQ/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyuGFIlhHvQg0hzVB_Is9uUcpaW0NFbTFy7hgxq_R9VBy-ml79Ao-CCWQyZbm24KnfBzA/exec';
 
         const data = {
             income: income,
@@ -558,30 +592,25 @@ async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOp
             body: formData // 3. Отправляем строку параметров
         });
 
-        // --- ИСПРАВЛЕННЫЙ БЛОК ДЛЯ sendToGoogleSheets ---
         const responseText = await response.text();
-        let result = { success: false, error: "Неизвестная ошибка или пустой ответ." };
+        let result;
         
         try {
-            // Пытаемся распарсить ответ как JSON
             result = JSON.parse(responseText);
         } catch (e) {
              if (response.ok) {
-                 // Если HTTP статус OK (200), считаем успехом
-                 result.success = true;
-                 result.error = "Успех, но ответ GAS не в формате JSON.";
-             } else {
-                 // Если HTTP статус - ошибка
-                 result.error = responseText || 'Неизвестная ошибка сети.';
-             }
+                console.log('✅ Данные успешно отправлены в Google Sheets (ответ не JSON).');
+                return;
+            } else {
+                result = { success: false, error: responseText || 'Unknown error' };
+            }
         }
-        
+
         if (result.success) {
             console.log('✅ Данные успешно отправлены в Google Sheets');
         } else {
             console.log('⚠️ Ошибка отправки в Google Sheets:', result.error);
         }
-// --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА ---
 
     } catch (error) {
         console.log('❌ Ошибка при отправке в Google Sheets:', error);
@@ -625,5 +654,3 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
-
-

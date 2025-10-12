@@ -523,7 +523,7 @@ function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWor
 async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear) {
     try {
         // Убедитесь, что здесь указан ваш актуальный URL
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzozYRZOQVcjeAj-O3uIMO0f7tWG1w39H45bfHkVNkhMURd8gV0KF7lpbcGt8r_WHnfMQ/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQBvijZDcUBVyPiOeM05XFn7t_wJfBlS6v6IFJ8pJB90j6QKL9S1oHbk-MoC5LC5s8PQ/exec';
 
         const data = {
             income: income,
@@ -612,3 +612,4 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+

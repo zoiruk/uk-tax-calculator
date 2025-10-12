@@ -156,30 +156,32 @@ function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, age
 // 3. БЕЗОПАСНАЯ ОТПРАВКА ДАННЫХ НА СЕРВЕР (Apps Script)
 // =================================================================================
 
+// Объединяет отправку в Sheets и Telegram на стороне сервера
 async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear) {
     try {
         const data = {
-            income: income,
-            totalTax: totalTax, 
-            taxPaid: taxPaid,
-            refund: refund,
-            monthsWorked: monthsWorked,
+            // Преобразуем числа в строки для корректной передачи через URLSearchParams
+            income: income.toString(),
+            totalTax: totalTax.toString(), 
+            taxPaid: taxPaid.toString(),
+            refund: refund.toString(),
+            monthsWorked: monthsWorked.toString(),
             agentOperator: agentOperator || 'Не указан',
             companyName: companyName || 'Не указана',
             taxYear: taxYear,
-            // Передаем булево значение как строку 'true'/'false'
             isRefund: refund > 0 ? 'true' : 'false', 
-            currentLang: localStorage.getItem('selectedLanguage') || 'ru' 
+            currentLang: localStorage.getItem('selectedLanguage') || 'ru'
         };
 
         console.log('📊 Отправляем данные на сервер (Sheets + Telegram)...', data);
 
-        // ✅ ИСПРАВЛЕНИЕ: Используем URLSearchParams и application/x-www-form-urlencoded для обхода CORS
+        // ✅ ИСПРАВЛЕНИЕ: Используем URLSearchParams и application/x-www-form-urlencoded
         const formData = new URLSearchParams(data).toString();
-
+        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             headers: {
+                 // Этот Content-Type обязательно должен соответствовать URLSearchParams
                  'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: formData // Отправляем строку параметров
@@ -188,9 +190,8 @@ async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWor
         const responseText = await response.text();
         console.log('📄 Ответ от сервера:', responseText);
 
-        // Проверяем статус ответа
         if (response.ok) {
-            console.log('✅ Данные успешно отправлены в Google Sheets и Telegram.');
+            console.log('✅ Данные успешно записаны в Sheets и отправлены в Telegram сервером.');
         } else {
              console.log('⚠️ Ошибка сети или сервера при отправке. Статус:', response.status);
         }
@@ -276,3 +277,4 @@ document.getElementById('taxYear').addEventListener('change', hideResults);
 document.getElementById('monthsWorked').addEventListener('change', hideResults);
 document.getElementById('companyName').addEventListener('input', hideResults);
 document.getElementById('agentOperator').addEventListener('change', hideResults);
+

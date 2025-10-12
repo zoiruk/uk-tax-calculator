@@ -415,24 +415,32 @@ async function sendResultToTelegram(income, totalTax, taxPaid, refund, monthsWor
             body: formData
         });
 
+        // --- ИСПРАВЛЕННЫЙ БЛОК ДЛЯ sendResultToTelegram ---
         const responseText = await response.text();
-        let result;
-
+        // Устанавливаем результат по умолчанию на случай, если ответ пуст или нечитаем
+        let result = { success: false, error: "Неизвестная ошибка или пустой ответ." }; 
+        
         try {
+            // Пытаемся распарсить ответ как JSON
             result = JSON.parse(responseText);
         } catch (e) {
+            // Если парсинг не удался (например, пришел HTML/ошибка)
              if (response.ok) {
-                 result = { success: true };
+                 // Если HTTP статус OK (200), считаем успехом, но предупреждаем
+                 result.success = true;
+                 result.error = "Успех, но ответ GAS не в формате JSON.";
              } else {
-                 result = { success: false, error: responseText || 'Unknown error' };
+                 // Если HTTP статус не OK и не JSON, записываем весь ответ как ошибку
+                 result.error = responseText || 'Неизвестная ошибка сети.';
              }
         }
-
+        
         if (result.success) {
             console.log('✅ Результат успешно отправлен в Telegram через GAS Прокси.');
         } else {
             console.log('⚠️ Ошибка отправки в Telegram через GAS Прокси:', result.error);
         }
+// --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА ---
 
     } catch (error) {
         console.log('❌ Общая ошибка при отправке в Telegram:', error);
@@ -550,25 +558,30 @@ async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOp
             body: formData // 3. Отправляем строку параметров
         });
 
+        // --- ИСПРАВЛЕННЫЙ БЛОК ДЛЯ sendToGoogleSheets ---
         const responseText = await response.text();
-        let result;
+        let result = { success: false, error: "Неизвестная ошибка или пустой ответ." };
         
         try {
+            // Пытаемся распарсить ответ как JSON
             result = JSON.parse(responseText);
         } catch (e) {
              if (response.ok) {
-                console.log('✅ Данные успешно отправлены в Google Sheets (ответ не JSON).');
-                return;
-            } else {
-                result = { success: false, error: responseText || 'Unknown error' };
-            }
+                 // Если HTTP статус OK (200), считаем успехом
+                 result.success = true;
+                 result.error = "Успех, но ответ GAS не в формате JSON.";
+             } else {
+                 // Если HTTP статус - ошибка
+                 result.error = responseText || 'Неизвестная ошибка сети.';
+             }
         }
-
+        
         if (result.success) {
             console.log('✅ Данные успешно отправлены в Google Sheets');
         } else {
             console.log('⚠️ Ошибка отправки в Google Sheets:', result.error);
         }
+// --- КОНЕЦ ИСПРАВЛЕННОГО БЛОКА ---
 
     } catch (error) {
         console.log('❌ Ошибка при отправке в Google Sheets:', error);
@@ -612,4 +625,5 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+
 

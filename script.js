@@ -179,10 +179,12 @@ async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWor
         console.log('📊 Отправляем данные на сервер (Sheets + Telegram)...', data);
 
         // Отправляем данные в формате JSON
+        const formData = new URLSearchParams(data).toString();
+        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json', 
+                'Content-Type': 'application/x-www-form-urlencoded', 
             },
             body: JSON.stringify(data)
         });
@@ -294,3 +296,4 @@ document.getElementById('companyName').addEventListener('input', hideResults);
 document.getElementById('agentOperator').addEventListener('change', hideResults);
 
 // ... (Удалены старые тестовые функции)
+

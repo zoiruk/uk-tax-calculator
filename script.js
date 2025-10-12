@@ -562,8 +562,8 @@ function generateInterestingMessage(income, totalTax, taxPaid, refund, monthsWor
 // Функция для отправки данных в Google Sheets
 async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear) {
     try {
-        // URL вашего Google Apps Script веб-приложения
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXut3QKvZWBYW9WmTD2YRN6vAY4zA_4JyrE2Zg4LnLvv55HoByfW5nWZewtPJdyl9h9g/exec';
+        // URL вашего Google Apps Script веб-приложения (Убедитесь, что он правильный)
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_f7OHmRczHFJ4oQvcE8R9dTeHeJ65NdE0DmhZ-7T7G0XncCbI8RH7ym5n5H-feLsabQ/exec';
 
         const data = {
             income: income,
@@ -573,20 +573,38 @@ async function sendToGoogleSheets(income, taxPaid, refund, monthsWorked, agentOp
             agentOperator: agentOperator || 'Не указан',
             companyName: companyName || 'Не указана',
             taxYear: taxYear,
-            isRefund: refund > 0
+            isRefund: refund > 0 // Будет преобразовано в 'true' или 'false'
         };
 
         console.log('📊 Отправляем данные в Google Sheets...', data);
 
+        // !!! ИЗМЕНЕНИЕ: Преобразуем объект данных в строку URL-параметров !!!
+        const formData = new URLSearchParams(data).toString();
+
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                // !!! ИЗМЕНЕНИЕ: Устанавливаем Content-Type для обхода CORS !!!
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify(data)
+            body: formData // Отправляем строку параметров
         });
 
-        const result = await response.json();
+        // Поскольку мы изменили тип запроса, лучше быть готовым к разным ответам
+        const responseText = await response.text();
+        let result;
+        
+        try {
+            result = JSON.parse(responseText);
+        } catch (e) {
+             // Если ответ не JSON, но успешный, считаем, что все ОК
+             if (response.ok) {
+                console.log('✅ Данные успешно отправлены в Google Sheets (ответ не JSON).');
+                return;
+            } else {
+                result = { success: false, error: responseText || 'Unknown error' };
+            }
+        }
 
         if (result.success) {
             console.log('✅ Данные успешно отправлены в Google Sheets');
@@ -616,6 +634,7 @@ window.testTelegramBot = testTelegramBot;
 window.getChatId = getChatId;
 window.testQuickMessage = testQuickMessage;
 window.testGoogleSheets = testGoogleSheets;
+
 
 
 

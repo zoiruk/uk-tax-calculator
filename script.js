@@ -5,7 +5,7 @@
 // ⚠️ ЗАМЕНИТЕ ЭТОТ URL НА АКТУАЛЬНЫЙ URL ВАШЕГО РАЗВЕРНУТОГО GOOGLE APPS SCRIPT
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqdaSVyuWC7Kr2q4wmIu-WVJnh97sAEcgVFs9MVmV2sL8JSzgGtnM8IyYvfpIP_6Wz/exec';
 
-// Налоговые пороги для разных лет (Остается без изменений)
+// Налоговые пороги для разных лет (UK Tax Bands)
 const taxBands = {
     '2025-26': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
     '2024-25': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
@@ -13,7 +13,7 @@ const taxBands = {
     '2022-23': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 150000, rate: 0.40 }, additionalRate: { min: 150001, rate: 0.45 } }
 };
 
-// Инициализация Telegram Web App (Остается без изменений)
+// Инициализация Telegram Web App
 if (window.Telegram?.WebApp) {
     const tg = window.Telegram.WebApp;
     tg.ready();
@@ -22,7 +22,6 @@ if (window.Telegram?.WebApp) {
 
     const user = tg.initDataUnsafe?.user;
     if (user) {
-        // ... (логика сохранения языка)
         const supportedLanguages = ['ru', 'en', 'uz', 'kk', 'ky', 'tg'];
         if (user.language_code && supportedLanguages.includes(user.language_code)) {
             localStorage.setItem('selectedLanguage', user.language_code);
@@ -38,17 +37,18 @@ if (window.Telegram?.WebApp) {
 // =================================================================================
 
 function calculateIncomeTax(income, taxYear) {
-    // ... (ваш код расчета налога)
     const bands = taxBands[taxYear];
     let tax = 0;
     let breakdown = [];
     let remainingIncome = income;
-
+    
+    // Если доход меньше необлагаемого минимума
     if (income <= bands.personalAllowance) {
         breakdown.push({ range: `£0 - £${bands.personalAllowance.toLocaleString()}`, rate: '0%', taxableAmount: income, tax: 0 });
         return { totalTax: 0, breakdown };
     }
 
+    // Необлагаемый минимум
     breakdown.push({ range: `£0 - £${bands.personalAllowance.toLocaleString()}`, rate: '0%', taxableAmount: bands.personalAllowance, tax: 0 });
     remainingIncome -= bands.personalAllowance;
 
@@ -84,27 +84,26 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
 }
 
+function getMonthsText(months) {
+    if (months === 1) return 'месяц';
+    if (months >= 2 && months <= 4) return 'месяца';
+    return 'месяцев';
+}
+
 function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, agentOperator) {
     const { totalTax, breakdown } = calculateIncomeTax(income, taxYear);
     const refund = taxPaid - totalTax;
 
-    // ... (весь ваш код обновления DOM)
-
-    // Обновляем информацию о работе
-    const currentLang = localStorage.getItem('selectedLanguage') || 'ru';
-    // ⚠️ Замените translations на объект с вашими переводами, если он существует
     const notSpecifiedText = 'Не указано'; 
 
     document.getElementById('summaryCompany').textContent = companyName || notSpecifiedText;
     document.getElementById('summaryAgent').textContent = agentOperator || notSpecifiedText;
     document.getElementById('summaryPeriod').textContent = `${monthsWorked} ${getMonthsText(monthsWorked)} (${taxYear})`;
 
-    // Обновляем основные результаты
     document.getElementById('actualIncome').textContent = formatCurrency(income);
     document.getElementById('taxDue').textContent = formatCurrency(totalTax);
     document.getElementById('paidTax').textContent = formatCurrency(taxPaid);
 
-    // Обновляем отображение возврата/доплаты (логика остается прежней)
     const refundHighlight = document.getElementById('refundHighlight');
     const paymentItem = document.getElementById('paymentItem');
     const refundAmountElement = document.getElementById('refundAmount');
@@ -129,7 +128,6 @@ function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, age
         paymentAmountElement.textContent = formatCurrency(0);
     }
 
-    // Детализация налога
     const breakdownContainer = document.getElementById('taxBreakdown');
     breakdownContainer.innerHTML = '';
 
@@ -142,13 +140,11 @@ function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, age
         }
     });
 
-    // Показываем результаты
     document.getElementById('results').classList.remove('hidden');
 
     // 🚀 ЕДИНАЯ ОТПРАВКА: Отправляем все данные на сервер
     sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear);
 
-    // Показываем рекламный блок
     setTimeout(() => {
         const promoBlock = document.getElementById('taxServicePromo');
         promoBlock.style.display = 'block';
@@ -160,7 +156,6 @@ function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, age
 // 3. БЕЗОПАСНАЯ ОТПРАВКА ДАННЫХ НА СЕРВЕР (Apps Script)
 // =================================================================================
 
-// Объединяет отправку в Sheets и Telegram на стороне сервера
 async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear) {
     try {
         const data = {
@@ -172,41 +167,32 @@ async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWor
             agentOperator: agentOperator || 'Не указан',
             companyName: companyName || 'Не указана',
             taxYear: taxYear,
-            isRefund: refund > 0,
-            currentLang: localStorage.getItem('selectedLanguage') || 'ru' // Передаем язык для серверного сообщения
+            // Передаем булево значение как строку 'true'/'false'
+            isRefund: refund > 0 ? 'true' : 'false', 
+            currentLang: localStorage.getItem('selectedLanguage') || 'ru' 
         };
 
         console.log('📊 Отправляем данные на сервер (Sheets + Telegram)...', data);
 
-        // Отправляем данные в формате JSON
+        // ✅ ИСПРАВЛЕНИЕ: Используем URLSearchParams и application/x-www-form-urlencoded для обхода CORS
         const formData = new URLSearchParams(data).toString();
-        
+
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded', 
+                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify(data)
+            body: formData // Отправляем строку параметров
         });
 
         const responseText = await response.text();
-        // ... (логика обработки ответа)
-        let result;
-        try {
-            result = JSON.parse(responseText);
-        } catch (e) {
-             if (response.ok) {
-                 console.log('✅ Данные успешно отправлены. Сервер ответил не-JSON.');
-                 return;
-             } else {
-                 result = { success: false, error: responseText || 'Unknown error' };
-             }
-         }
+        console.log('📄 Ответ от сервера:', responseText);
 
-        if (result.success) {
-            console.log('✅ Данные успешно записаны в Sheets и отправлены в Telegram сервером.');
+        // Проверяем статус ответа
+        if (response.ok) {
+            console.log('✅ Данные успешно отправлены в Google Sheets и Telegram.');
         } else {
-            console.log('⚠️ Ошибка при обработке на сервере:', result.error);
+             console.log('⚠️ Ошибка сети или сервера при отправке. Статус:', response.status);
         }
 
     } catch (error) {
@@ -215,18 +201,13 @@ async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWor
 }
 
 // =================================================================================
-// 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ И ОБРАБОТЧИКИ (Остаются без изменений)
+// 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ И ОБРАБОТЧИКИ
 // =================================================================================
-
-function getMonthsText(months) {
-    if (months === 1) return 'месяц';
-    if (months >= 2 && months <= 4) return 'месяца';
-    return 'месяцев';
-}
 
 function parseCleanNumber(value) {
     if (!value) return 0;
-    let cleanValue = value.toString().replace(/[^\d]/g, '');
+    // Убираем все символы кроме цифр
+    let cleanValue = value.toString().replace(/[^\d]/g, ''); 
     const result = parseInt(cleanValue);
     return isNaN(result) ? 0 : result;
 }
@@ -247,7 +228,6 @@ function formatNumberInput(input) {
     }
 }
 
-// Обработчик формы
 document.getElementById('taxForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -258,12 +238,15 @@ document.getElementById('taxForm').addEventListener('submit', function (e) {
     const companyName = document.getElementById('companyName').value.trim();
     const agentOperator = document.getElementById('agentOperator').value.trim();
 
-    // ... (Ваш код валидации)
+    if (income <= 0 || taxPaid < 0 || !monthsWorked) {
+        // ... (Ваша логика валидации с alert)
+        return;
+    }
 
     displayResults(income, taxPaid, taxYear, monthsWorked, companyName, agentOperator);
 });
 
-// Добавляем форматирование для числовых полей
+// Добавляем форматирование и обработчики
 const incomeInput = document.getElementById('annualIncome');
 const taxPaidInput = document.getElementById('taxPaid');
 
@@ -287,13 +270,9 @@ function hideResults() {
     if (promoBlock) { promoBlock.style.display = 'none'; }
 }
 
-// Добавляем обработчики для скрытия результатов при изменении полей
 document.getElementById('annualIncome').addEventListener('input', hideResults);
 document.getElementById('taxPaid').addEventListener('input', hideResults);
 document.getElementById('taxYear').addEventListener('change', hideResults);
 document.getElementById('monthsWorked').addEventListener('change', hideResults);
 document.getElementById('companyName').addEventListener('input', hideResults);
 document.getElementById('agentOperator').addEventListener('change', hideResults);
-
-// ... (Удалены старые тестовые функции)
-

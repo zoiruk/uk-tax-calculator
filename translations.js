@@ -1,8 +1,19 @@
 // Переводы для многоязычного сайта
 const translations = {
     ru: {
-        title: "Калькулятор возврата налогов HMRC",
-        subtitle: "Рассчитайте сумму возврата подоходного налога в Великобритании",
+        banner_text: "🧮 Калькулятор возврата налогов (UK)<br><small>Узнайте, сколько налога вы можете вернуть за 1 минуту.</small>",
+        title: "🧮 Калькулятор возврата налогов (UK)",
+        subtitle: "Узнайте, сколько налога вы можете вернуть за 1 минуту.",
+        partnership_short: "Этот инструмент разработан для расчета суммы возврата подоходного налога в Великобритании.",
+        about_project_link: "Подробнее о проекте",
+        modal_title: "О проекте",
+        modal_content: "Этот инструмент разработан <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Сообществом сезонных рабочих</a> в партнерстве с White Tax Returns — официально зарегистрированным налоговым агентством в Великобритании.",
+        modal_mission_title: "Цель проекта:",
+        modal_mission_text: "Инструмент создан для того, чтобы помочь участникам сообщества эффективно, прозрачно и бесплатно рассчитывать свои налоговые льготы. Все алгоритмы калькулятора основаны на актуальных данных налогового законодательства Великобритании на 2026-27 год.",
+        modal_dev_title: "Разработка цифровых решений",
+        modal_dev_text: "Этот калькулятор — пример того, как технологии могут упрощать сложные процессы и приносить реальную пользу людям.<br><br>Если есть задача, которую важно сделать понятной, удобной и надежной для пользователей — её можно превратить в рабочий инструмент.<br><br>Создаются решения, которые:<br>✅ упрощают взаимодействие с клиентами<br>✅ повышают доверие<br>✅ дают точный и прозрачный результат",
+        modal_dev_link: "👉 Обсудить разработку решения",
+        close_btn: "Понятно",
         work_info: "Информация о работе",
         company_name: "Название компании/фермы:",
         company_placeholder: "Введите название компании или фермы",
@@ -31,6 +42,8 @@ const translations = {
         tax_year: "Налоговый год:",
         select_tax_year: "Выберите налоговый год",
         calculate_button: "🧮 Рассчитать возврат",
+        reset_button: "🔄 Начать заново",
+        reset_confirm_msg: "Вы уверены, что хотите начать заново? Данные будут удалены.",
         result_title: "Результат расчета",
         work_summary: "Информация о работе",
         company_farm: "Компания/Ферма:",
@@ -50,18 +63,42 @@ const translations = {
         full_support: "Полное сопровождение подачи декларации в HMRC",
         max_refund: "Максимальный возврат налогов",
         apply_button: "👉 Подать заявку",
-        tax_rates_title: "Информация о налоговых ставках UK (2025-26)",
+        tax_rates_title: "Информация о налоговых ставках UK (2026-27)",
         personal_allowance: "Необлагаемый минимум: £12,570",
         basic_rate: "Базовая ставка (20%): £12,571 - £50,270",
         higher_rate: "Повышенная ставка (40%): £50,271 - £125,140",
         additional_rate: "Дополнительная ставка (45%): свыше £125,140",
+        add_farm_btn: "➕ Добавить другое место работы",
+        remove_farm_btn: "❌ Удалить",
+        farm_label: "Ферма/Компания",
+        total_income_all: "Общий доход (все фермы):",
+        total_tax_all: "Всего удержано налога:",
         not_specified: "Не указано",
-        developed_by: "Разработано:",
-        footer_note: "Бесплатный калькулятор для расчета возврата налогов HMRC"
+        developed_by: "Разработка цифровых решений —",
+        live_income: "Общий доход (Live):",
+        tax_year_info_text: "Британский налоговый год длится с 6 апреля до 5 апреля следующего года.",
+        income_info_text: "Ваш доход 'Gross' (до вычета налогов), указанный в Payslip или P45/P60.",
+        tax_paid_info_text: "Сумма подоходного налога (Income Tax), удержанная из вашей зарплаты.",
+        months_info_text: "Сколько полных месяцев вы проработали в этой компании.",
+        months_many_label: "месяцев",
+        month_1_label: "месяц",
+        months_2_4_label: "месяца",
+        footer_note: "Этот калькулятор разработан в сотрудничестве с White Tax Returns, чтобы помочь членам <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Сообщества сезонных рабочих</a> рассчитать налоговые льготы в Великобритании."
     },
     en: {
-        title: "HMRC Tax Refund Calculator",
-        subtitle: "Calculate your UK income tax refund amount",
+        banner_text: "🧮 Tax Refund Calculator (UK)<br><small>Find out how much tax you can get back in 1 minute.</small>",
+        title: "🧮 Tax Refund Calculator (UK)",
+        subtitle: "Find out how much tax you can get back in 1 minute.",
+        partnership_short: "This tool is designed to calculate the amount of income tax refund in the UK.",
+        about_project_link: "About project",
+        modal_title: "About Project",
+        modal_content: "This tool was developed by the <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Seasonal Workers' Community</a> in partnership with White Tax Returns — an officially registered tax agency in the UK.",
+        modal_mission_title: "Project Goal:",
+        modal_mission_text: "The tool was created to help community members calculate their tax benefits efficiently, transparently, and for free. All calculator algorithms are based on current UK tax law data for 2026-27.",
+        modal_dev_title: "Digital Solutions Development",
+        modal_dev_text: "This calculator is an example of how technology can simplify complex processes and bring real value to people.<br><br>If there is a task that is important to make understandable, convenient and reliable for users — it can be turned into a professional tool.<br><br>We create solutions that:<br>✅ simplify interaction with customers<br>✅ increase trust<br>✅ give accurate and transparent results",
+        modal_dev_link: "👉 Discuss solution development",
+        close_btn: "Got it",
         work_info: "Work Information",
         company_name: "Company/Farm Name:",
         company_placeholder: "Enter company or farm name",
@@ -90,6 +127,8 @@ const translations = {
         tax_year: "Tax Year:",
         select_tax_year: "Select tax year",
         calculate_button: "🧮 Calculate Refund",
+        reset_button: "🔄 Start Over",
+        reset_confirm_msg: "Are you sure you want to start over? All data will be cleared.",
         result_title: "Calculation Result",
         work_summary: "Work Information",
         company_farm: "Company/Farm:",
@@ -109,18 +148,42 @@ const translations = {
         full_support: "Full support for HMRC declaration submission",
         max_refund: "Maximum tax refund",
         apply_button: "👉 Apply Now",
-        tax_rates_title: "UK Tax Rates Information (2025-26)",
+        tax_rates_title: "UK Tax Rates Information (2026-27)",
         personal_allowance: "Personal Allowance: £12,570",
         basic_rate: "Basic Rate (20%): £12,571 - £50,270",
         higher_rate: "Higher Rate (40%): £50,271 - £125,140",
         additional_rate: "Additional Rate (45%): over £125,140",
+        add_farm_btn: "➕ Add another workplace",
+        remove_farm_btn: "❌ Remove",
+        farm_label: "Farm/Company",
+        total_income_all: "Total Income (all farms):",
+        total_tax_all: "Total Tax Withheld:",
         not_specified: "Not specified",
-        developed_by: "Developed by:",
-        footer_note: "Free calculator for HMRC tax refund calculations"
+        developed_by: "Digital Solutions Development —",
+        live_income: "Total Income (Live):",
+        tax_year_info_text: "The UK tax year runs from April 6th to April 5th of the following year.",
+        income_info_text: "Your Gross income (before tax), as shown on your Payslip or P45/P60.",
+        tax_paid_info_text: "Total Income Tax withheld from your earnings.",
+        months_info_text: "How many full months you worked for this company.",
+        months_many_label: "months",
+        month_1_label: "month",
+        months_2_4_label: "months",
+        footer_note: "This calculator was developed in partnership with White Tax Returns to assist members of the <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Seasonal Workers' Community</a> in calculating tax benefits in the UK."
     },
     uz: {
-        title: "HMRC Soliq Qaytarish Kalkulyatori",
-        subtitle: "Buyuk Britaniyada daromad solig'i qaytarilishi miqdorini hisoblang",
+        banner_text: "🧮 Soliq Qaytarish Kalkulyatori (UK)<br><small>1 daqiqa ichida qancha soliq qaytarib olishingiz mumkinligini bilib oling.</small>",
+        title: "🧮 Soliq Qaytarish Kalkulyatori (UK)",
+        subtitle: "1 daqiqa ichida qancha soliq qaytarib olishingiz mumkinligini bilib oling.",
+        partnership_short: "Ushbu vosita Buyuk Britaniyada daromad solig'ini qaytarish miqdorini hisoblash uchun ishlab chiqilgan.",
+        about_project_link: "Loyiha haqida batafsil",
+        modal_title: "Loyiha haqida",
+        modal_content: "Ushbu vosita <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Mavsumiy Ishchilar Jamoasi</a> tomonidan White Tax Returns — Buyuk Britaniyadagi rasmiy ro'yxatdan o'tgan soliq agentligi bilan hamkorlikda ishlab chiqilgan.",
+        modal_mission_title: "Loyiha maqsadi:",
+        modal_mission_text: "Asbob hamjamiyat a'zolariga soliq imtiyozlarini samarali, shaffof va bepul hisoblashda yordam berish uchun yaratilgan. Kalkulyatorning barcha algoritmlari 2026-27 yillardagi Buyuk Britaniya soliq qonunchiligining dolzarb ma'lumotlariga asoslangan.",
+        modal_dev_title: "Raqamli yechimlar ishlab chiqish",
+        modal_dev_text: "Ushbu kalkulyator texnologiyalar murakkab jarayonlarni qanday soddalashtirishi va odamlarga real foyda keltirishi mumkinligiga bir misoldir.<br><br>Agar foydalanuvchilar uchun tushunarli, qulay va ishonchli bo'lishi muhim bo'lgan vazifa bo'lsa - uni ishchi vositaga aylantirish mumkin.<br><br>Quyidagi yechimlar yaratiladi:<br>✅ mijozlar bilan muloqotni soddalashtiradi<br>✅ ishonchni oshiradi<br>✅ aniq va shaffof natija beradi",
+        modal_dev_link: "👉 Yechim ishlab chiqishni muhokama qilish",
+        close_btn: "Tushunarli",
         work_info: "Ish Ma'lumotlari",
         company_name: "Kompaniya/Ferma Nomi:",
         company_placeholder: "Kompaniya yoki ferma nomini kiriting",
@@ -149,6 +212,8 @@ const translations = {
         tax_year: "Soliq Yili:",
         select_tax_year: "Soliq yilini tanlang",
         calculate_button: "🧮 Qaytarishni Hisoblash",
+        reset_button: "🔄 Yangidan boshlash",
+        reset_confirm_msg: "Haqiqatan ham yangidan boshlamoqchimisiz? Ma'lumotlar o'chirib tashlanadi.",
         result_title: "Hisoblash Natijasi",
         work_summary: "Ish Ma'lumotlari",
         company_farm: "Kompaniya/Ferma:",
@@ -168,18 +233,42 @@ const translations = {
         full_support: "HMRC deklaratsiyasini topshirish uchun to'liq yordam",
         max_refund: "Maksimal soliq qaytarish",
         apply_button: "👉 Ariza Berish",
-        tax_rates_title: "Buyuk Britaniya Soliq Stavkalari Ma'lumoti (2025-26)",
+        tax_rates_title: "Buyuk Britaniya Soliq Stavkalari Ma'lumoti (2026-27)",
         personal_allowance: "Shaxsiy Imtiyoz: £12,570",
         basic_rate: "Asosiy Stavka (20%): £12,571 - £50,270",
         higher_rate: "Yuqori Stavka (40%): £50,271 - £125,140",
         additional_rate: "Qo'shimcha Stavka (45%): £125,140 dan ortiq",
+        add_farm_btn: "➕ Boshqa ish joyini qo'shish",
+        remove_farm_btn: "❌ O'chirish",
+        farm_label: "Ferma/Kompaniya",
+        total_income_all: "Umumiy daromad (barcha fermalar):",
+        total_tax_all: "Jami ushlab qolingan soliq:",
         not_specified: "Ko'rsatilmagan",
-        developed_by: "Ishlab chiqilgan:",
-        footer_note: "HMRC soliq qaytarish hisoblash uchun bepul kalkulyator"
+        developed_by: "Raqamli yechimlar ishlab chiqish —",
+        live_income: "Jami daromad (Live):",
+        tax_year_info_text: "Buyuk Britaniya soliq yili 6-apreldan keyingi yilning 5-apreligacha davom etadi.",
+        income_info_text: "Sizning Payslip yoki P45/P60-da ko'rsatilgan 'Gross' (soliqgacha bo'lgan) daromadingiz.",
+        tax_paid_info_text: "Sizning maoshingizdan ushlab qolingan daromad solig'i (Income Tax) miqdori.",
+        months_info_text: "Ushbu kompaniyada necha to'liq oy ishlaganingiz.",
+        months_many_label: "oy",
+        month_1_label: "oy",
+        months_2_4_label: "oy",
+        footer_note: "Ushbu kalkulyator <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Mavsumiy Ishchilar Jamoasi</a> a'zolari uchun Buyuk Britaniyadagi soliq imtiyozlarini hisoblashda ko'maklashish maqsadida White Tax Returns bilan hamkorlikda ishlab chiqildi."
     },
     kk: {
-        title: "HMRC Салық Қайтару Калькуляторы",
-        subtitle: "Ұлыбританиядағы табыс салығын қайтару мөлшерін есептеңіз",
+        banner_text: "🧮 Салық Қайтару Калькуляторы (UK)<br><small>1 минут ішінде қанша салық қайтара алатыныңызды біліңіз.</small>",
+        title: "🧮 Салық Қайтару Калькуляторы (UK)",
+        subtitle: "1 минут ішінде қанша салық қайтара алатыныңызды біліңіз.",
+        partnership_short: "Бұл құрал Ұлыбританиядағы табыс салығын қайтару сомасын есептеуге арналған.",
+        about_project_link: "Жоба туралы толығырақ",
+        modal_title: "Жоба туралы",
+        modal_content: "Бұл құралды <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Маусымдық жұмысшылар қауымдастығы</a> White Tax Returns — Ұлыбританиядағы ресми тіркелген салық агенттігімен серіктестікте әзірлеген.",
+        modal_mission_title: "Жобаның мақсаты:",
+        modal_mission_text: "Құрал қауымдастық мүшелеріне салық жеңілдіктерін тиімді, ашық және тегін есептеуге көмектесу үшін жасалған. Калькулятордың барлық алгоритмдері 2026-27 жылдардағы Ұлыбритания салық заңнамасының өзекті мәліметтеріне негізделген.",
+        modal_dev_title: "Цифрлық шешімдерді әзірлеу",
+        modal_dev_text: "Бұл калькулятор технологияның күрделі процестерді қалай жеңілдететінінің және адамдарға нақты пайда әкелетінінің мысалы болып табылады.<br><br>Егер пайдаланушылар үшін түсінікті, ыңғайлы және сенімді болуы маңызды міндет болса - оны жұмыс құралына айналдыруға болады.<br><br>Келесі шешімдер жасалады:<br>✅ клиенттермен өзара әрекеттесуді жеңілдетеді<br>✅ сенімді арттырады<br>✅ дәл және ашық нәтиже береді",
+        modal_dev_link: "👉 Шешім әзірлеуді талқылау",
+        close_btn: "Түсінікті",
         work_info: "Жұмыс туралы ақпарат",
         company_name: "Компания/Ферма атауы:",
         company_placeholder: "Компания немесе ферма атауын енгізіңіз",
@@ -208,6 +297,8 @@ const translations = {
         tax_year: "Салық жылы:",
         select_tax_year: "Салық жылын таңдаңыз",
         calculate_button: "🧮 Қайтаруды есептеу",
+        reset_button: "🔄 Қайта бастау",
+        reset_confirm_msg: "Жаңадан бастағыңыз келетініне сенімдісіз бе? Барлық деректер жойылады.",
         result_title: "Есептеу нәтижесі",
         work_summary: "Жұмыс туралы ақпарат",
         company_farm: "Компания/Ферма:",
@@ -227,18 +318,37 @@ const translations = {
         full_support: "HMRC декларациясын тапсыру үшін толық қолдау",
         max_refund: "Максималды салық қайтару",
         apply_button: "👉 Өтініш беру",
-        tax_rates_title: "Ұлыбритания салық мөлшерлемелері туралы ақпарат (2025-26)",
+        tax_rates_title: "Ұлыбритания салық мөлшерлемелері туралы ақпарат (2026-27)",
         personal_allowance: "Жеке жеңілдік: £12,570",
         basic_rate: "Негізгі мөлшерлеме (20%): £12,571 - £50,270",
         higher_rate: "Жоғары мөлшерлеме (40%): £50,271 - £125,140",
         additional_rate: "Қосымша мөлшерлеме (45%): £125,140-тан жоғары",
+        add_farm_btn: "➕ Басқа жұмыс орнын қосу",
+        remove_farm_btn: "❌ Өшіру",
+        farm_label: "Ферма/Компания",
+        total_income_all: "Жалпы табыс (барлық фермалар):",
+        total_tax_all: "Жалпы ұсталған салық:",
         not_specified: "Көрсетілмеген",
-        developed_by: "Жасаған:",
-        footer_note: "HMRC салық қайтару есептеу үшін тегін калькулятор"
+        developed_by: "Цифрлық шешімдерді әзірлеу —",
+        months_many_label: "ай",
+        month_1_label: "ай",
+        months_2_4_label: "ай",
+        footer_note: "Бұл калькулятор <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Маусымдық жұмысшылар қауымдастығы</a> мүшелеріне Ұлыбританиядағы салық жеңілдіктерін есептеуге көмектесу мақсатында White Tax Returns-пен серіктестікте әзірленген."
     },
     ky: {
-        title: "HMRC Салык Кайтаруу Калькулятору",
-        subtitle: "Улуу Британиядагы киреше салыгын кайтаруу өлчөмүн эсептеңиз",
+        banner_text: "🧮 Салык Кайтаруу Калькулятору (UK)<br><small>1 мүнөттүн ичинде канча салык кайтарып ала тургандыгыңызды билиңиз.</small>",
+        title: "🧮 Салык Кайтаруу Калькулятору (UK)",
+        subtitle: "1 мүнөттүн ичинде канча салык кайтарып ала тургандыгыңызды билиңиз.",
+        partnership_short: "Бул курал Улуу Британиядагы киреше салыгын кайтаруу суммасын эсептөө үчүн иштелип чыккан.",
+        about_project_link: "Долбоор жөнүндө кененирээк",
+        modal_title: "Долбоор жөнүндө",
+        modal_content: "Бул курал <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Сезондук жумушчулар жамааты</a> тарабынан White Tax Returns — Улуу Британиядагы расмий катталган салык агенттиги менен өнөктөштүктө иштелип чыккан.",
+        modal_mission_title: "Долбоордун максаты:",
+        modal_mission_text: "Курал жамаат мүчөлөрүнө салык жеңилдиктерин натыйжалуу, ачык жана акысыз эсептөөгө жардам берүү үчүн түзүлгөн. Калькулятордун бардык алгоритмдери 2026-27-жылдардагы Улуу Британиянын салык мыйзамдарынын актуалдуу маалыматтарына негизделген.",
+        modal_dev_title: "Санариптик чечимдерди иштеп чыгуу",
+        modal_dev_text: "Бул калькулятор технология татаал процесстерди кантип жөнөкөйлөтүп, адамдарга реалдуу пайда алып келерин көрсөткөн мисал болуп саналат.<br><br>Эгерде колдонуучулар үчүн түшүнүктүү, ыңғайлуу жана ишенимдүү болуусу маанилүү болгон тапшырма болсо - аны жумушчу куралга айландырса болот.<br><br>Кийинки чечимдер түзүлөт:<br>✅ кардарлар менен өз ара аракеттенүүнү жөнөкөйлөтөт<br>✅ ишенимди арттырат<br>✅ так жана ачык жыйынтык берет",
+        modal_dev_link: "👉 Чечимди иштеп чыгууну талкуулоо",
+        close_btn: "Түшүнүктүү",
         work_info: "Жумуш жөнүндө маалымат",
         company_name: "Компания/Ферма аталышы:",
         company_placeholder: "Компания же ферма аталышын киргизиңиз",
@@ -267,6 +377,8 @@ const translations = {
         tax_year: "Салык жылы:",
         select_tax_year: "Салык жылын тандаңыз",
         calculate_button: "🧮 Кайтарууну эсептөө",
+        reset_button: "🔄 Кайра баштоо",
+        reset_confirm_msg: "Кайра баштоону каалайсызбы? Бардык маалыматтар өчүрүлөт.",
         result_title: "Эсептөө жыйынтыгы",
         work_summary: "Жумуш жөнүндө маалымат",
         company_farm: "Компания/Ферма:",
@@ -286,18 +398,37 @@ const translations = {
         full_support: "HMRC декларациясын тапшыруу үчүн толук колдоо",
         max_refund: "Максималдуу салык кайтаруу",
         apply_button: "👉 Арыз берүү",
-        tax_rates_title: "Улуу Британия салык ставкалары жөнүндө маалымат (2025-26)",
+        tax_rates_title: "Улуу Британия салык ставкалары жөнүндө маалымат (2026-27)",
         personal_allowance: "Жеке жеңилдик: £12,570",
         basic_rate: "Негизги ставка (20%): £12,571 - £50,270",
         higher_rate: "Жогорку ставка (40%): £50,271 - £125,140",
         additional_rate: "Кошумча ставка (45%): £125,140-дан жогору",
+        add_farm_btn: "➕ Башка жумуш ордун кошуу",
+        remove_farm_btn: "❌ Өчүрүү",
+        farm_label: "Ферма/Компания",
+        total_income_all: "Жалпы киреше (бардык фермалар):",
+        total_tax_all: "Жалпы кармалган салык:",
         not_specified: "Көрсөтүлгөн эмес",
-        developed_by: "Иштеп чыккан:",
-        footer_note: "HMRC салык кайтаруу эсептөө үчүн акысыз калькулятор"
+        developed_by: "Санариптик чечимдерди иштеп чыгуу —",
+        months_many_label: "ай",
+        month_1_label: "ай",
+        months_2_4_label: "ай",
+        footer_note: "Бул калькулятор <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Сезондук жумушчулар жамааты</a> мүчөлөрүнө Улуу Британиядагы салык жеңилдиктерин эсептөөгө жардам берүү максатында White Tax Returns менен өнөктөштүктө иштелип чыккан."
     },
     tg: {
-        title: "Калькулятори Баргардонии Андози HMRC",
-        subtitle: "Миқдори баргардонии андози даромади Бритониякабирро ҳисоб кунед",
+        banner_text: "🧮 Калькулятори Баргардонии Андоз (UK)<br><small>Дар 1 дақиқа бифаҳмед, ки чӣ қадар андозро баргардонида метавонед.</small>",
+        title: "🧮 Калькулятори Баргардонии Андоз (UK)",
+        subtitle: "Дар 1 дақиқа бифаҳмед, ки чӣ қадар андозро баргардонида метавонед.",
+        partnership_short: "Ин восита барои ҳисоб кардани миқдори баргардонидани андози даромад дар Бритониёи Кабир таҳия шудааст.",
+        about_project_link: "Муфассал дар бораи лоиҳа",
+        modal_title: "Дар бораи лоиҳа",
+        modal_content: "Ин восита аз ҷониби <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Ҷамъияти коргарони мавсимӣ</a> дар ҳамкорӣ бо White Tax Returns — агентии расман сабтшудаи андоз дар Бритониёи Кабир таҳия шудааст.",
+        modal_mission_title: "Ҳадафи лоиҳа:",
+        modal_mission_text: "Асбоб барои кӯмак ба аъзоёни ҷомеа дар ҳисоб кардани имтиёзҳои андози худ ба таври муассир, шаффоф ва ройгон сохта шудааст. Ҳама алгоритмҳои калькулятора ба маълумоти ҷории қонунгузории андози Бритониё дар солҳои 2026-27 асос ёфтаанд.",
+        modal_dev_title: "Таҳияи қарорҳои рақамӣ",
+        modal_dev_text: "Ин калькулятор намунаи он аст, ки чӣ гуна технология метавонад равандҳои мураккабро содда кунад ва ба одамон фоидаи воқеӣ расонад.<br><br>Агар вазифае бошад, ки онро барои корбарон фаҳмо, қулай ва боэътимод кардан муҳим аст — онро ба воситаи корӣ табдил додан мумкин аст.<br><br>Қарорҳое сохта мешаванд, ки:<br>✅ ҳамкориро бо мизоҷон содда мекунанд<br>✅ эътимодро зиёд мекунанд<br>✅ натиҷаи дақиқ ва шаффоф медиҳанд",
+        modal_dev_link: "👉 Муҳокимаи таҳияи қарор",
+        close_btn: "Фаҳмост",
         work_info: "Маълумот дар бораи кор",
         company_name: "Номи ширкат/хоҷагӣ:",
         company_placeholder: "Номи ширкат ё хоҷагиро ворид кунед",
@@ -326,6 +457,8 @@ const translations = {
         tax_year: "Соли андозӣ:",
         select_tax_year: "Соли андозиро интихоб кунед",
         calculate_button: "🧮 Баргардониро ҳисоб кардан",
+        reset_button: "🔄 Аз нав оғоз кунед",
+        reset_confirm_msg: "Оё шумо боварӣ доред, ки мехоҳед аз нав оғоз кунед? Ҳама маълумотҳо тоза карда мешаванд.",
         result_title: "Натиҷаи ҳисобкунӣ",
         work_summary: "Маълумот дар бораи кор",
         company_farm: "Ширкат/Хоҷагӣ:",
@@ -345,14 +478,22 @@ const translations = {
         full_support: "Дастгирии пурра барои пешниҳоди декларатсия ба HMRC",
         max_refund: "Баргардонии максималии андоз",
         apply_button: "👉 Дархост додан",
-        tax_rates_title: "Маълумот дар бораи нархҳои андози Бритониякабир (2025-26)",
+        tax_rates_title: "Маълумот дар бораи нархҳои андози Бритониёи Кабир (2026-27)",
         personal_allowance: "Имтиёзи шахсӣ: £12,570",
         basic_rate: "Нархи асосӣ (20%): £12,571 - £50,270",
         higher_rate: "Нархи баланд (40%): £50,271 - £125,140",
         additional_rate: "Нархи иловагӣ (45%): аз £125,140 зиёд",
+        add_farm_btn: "➕ Илова кардани ҷои дигари кор",
+        remove_farm_btn: "❌ Нест кардан",
+        farm_label: "Хоҷагӣ/Ширкат",
+        total_income_all: "Даромади умумӣ (ҳамаи хоҷагиҳо):",
+        total_tax_all: "Ҷамъи андози нигоҳдошташуда:",
         not_specified: "Нишон дода нашудааст",
-        developed_by: "Таҳия кардааст:",
-        footer_note: "Калькулятори ройгон барои ҳисоб кардани баргардонидани андози HMRC"
+        developed_by: "Таҳияи қарорҳои рақамӣ —",
+        months_many_label: "моҳ",
+        month_1_label: "моҳ",
+        months_2_4_label: "моҳ",
+        footer_note: "Ин калькулятор бо мақсади кӯмак ба аъзоёни <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Ҷамъияти коргарони мавсимӣ</a> дар ҳисоб кардани имтиёзҳои андоз дар Бритониёи Кабир дар ҳамкорӣ бо White Tax Returns таҳия шудааст."
     }
 };
 
@@ -371,11 +512,14 @@ function getLanguageDisplay(lang) {
 
 // Функция для смены языка
 function changeLanguage(lang) {
+    // Переводим все элементы КРОМЕ кнопок выбора языка в модале
     const elements = document.querySelectorAll('[data-translate]');
     elements.forEach(element => {
+        // Пропускаем кнопки языкового модала — у них data-translate может быть на span
+        if (element.closest('.language-option')) return;
         const key = element.getAttribute('data-translate');
         if (translations[lang] && translations[lang][key]) {
-            element.textContent = translations[lang][key];
+            element.innerHTML = translations[lang][key];
         }
     });
 
@@ -387,6 +531,12 @@ function changeLanguage(lang) {
             element.placeholder = translations[lang][key];
         }
     });
+
+    // Обновляем кнопку выбора языка с флагом
+    const langBtn = document.getElementById('langBtn');
+    if (langBtn) {
+        langBtn.textContent = getLanguageDisplay(lang);
+    }
 
     // Сохраняем выбранный язык
     localStorage.setItem('selectedLanguage', lang);
@@ -428,7 +578,9 @@ function initLanguage() {
         option.addEventListener('click', (e) => {
             const lang = e.currentTarget.getAttribute('data-lang');
             changeLanguage(lang);
-
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+            }
             // Скрываем модальное окно
             hideLanguageModal();
         });
@@ -446,6 +598,12 @@ function initLanguage() {
                 hideLanguageModal();
             }
         });
+    }
+
+    // Кнопка открытия языкового модала из translations.js
+    const langBtnEl = document.getElementById('langBtn');
+    if (langBtnEl) {
+        langBtnEl.addEventListener('click', showLanguageModal);
     }
 }
 

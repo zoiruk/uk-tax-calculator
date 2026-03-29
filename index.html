@@ -23,13 +23,7 @@
 
         <!-- Header -->
         <header>
-            <div class="partnership-info" style="margin-top: 0;">
-                <span data-translate="partnership_short">Этот инструмент разработан для расчета суммы возврата
-                    подоходного налога в Великобритании.</span>
-                <a href="#" id="aboutProjectLink" data-translate="about_project_link">Подробнее о проекте</a>.
-            </div>
-
-            <button type="button" class="lang-btn" id="langBtn" style="margin-top: 24px;">
+            <button type="button" class="lang-btn" id="langBtn" style="margin-top: 0;">
                 🌍 Выберите язык
             </button>
         </header>
@@ -187,6 +181,9 @@
                     <span id="paidTax">£0</span>
                 </div>
 
+                <!-- Tax Chart Visualization Area -->
+                <div id="taxChartArea"></div>
+
                 <!-- 🎉 Refund highlight -->
                 <div id="refundHighlight" class="refund-highlight">
                     <div class="refund-title" data-translate="refund_title">🎉 Ваш возврат от HMRC</div>
@@ -272,6 +269,11 @@
 
         <!-- Footer -->
         <footer class="footer">
+            <div class="partnership-info footer-info">
+                <span data-translate="partnership_short">Этот инструмент разработан для расчета суммы возврата
+                    подоходного налога в Великобритании.</span>
+                <a href="#" id="aboutProjectLink" data-translate="about_project_link">Подробнее о проекте</a>.
+            </div>
             <div class="footer-minimal">
                 <span class="author-label" data-translate="developed_by">Разработано:</span>
                 <a href="https://t.me/Zoir_UK" target="_blank" class="author-link-minimal">

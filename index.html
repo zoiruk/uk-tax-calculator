@@ -1,35 +1,55 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Калькулятор возврата налогов HMRC для сезонных работников в Великобритании">
     <title>Калькулятор возврата налогов HMRC</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
     <!-- Telegram Web App API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <div class="container">
+
+    <!-- Top Banner -->
+    <div class="banner">
+        <span data-translate="banner_text">🧮 Калькулятор возврата налогов (UK)<br><small>Узнайте, сколько налога вы
+                можете вернуть за 1 минуту.</small></span>
+    </div>
+
+    <div class="container" id="main-container">
+
+        <!-- Header -->
         <header>
-            <h1 data-translate="title">Калькулятор возврата налогов HMRC</h1>
-            <p data-translate="subtitle">Рассчитайте сумму возврата подоходного налога в Великобритании</p>
+            <div class="partnership-info" style="margin-top: 0;">
+                <span data-translate="partnership_short">Этот инструмент разработан для расчета суммы возврата
+                    подоходного налога в Великобритании.</span>
+                <a href="#" id="aboutProjectLink" data-translate="about_project_link">Подробнее о проекте</a>.
+            </div>
+
+            <button type="button" class="lang-btn" id="langBtn" style="margin-top: 24px;">
+                🌍 Выберите язык
+            </button>
         </header>
 
+        <!-- Calculator -->
         <div class="calculator">
             <form id="taxForm">
+
+                <!-- Work Info Section -->
                 <div class="form-section">
-                    <h3 data-translate="work_info">Информация о работе</h3>
-                    
+                    <h3>🏢 <span data-translate="work_info">Информация о работе</span></h3>
+
                     <div class="input-group">
-                        <label for="companyName" data-translate="company_name">Название компании/фермы:</label>
-                        <input type="text" id="companyName" data-translate-placeholder="company_placeholder" placeholder="Введите название компании или фермы" required>
+                        <label for="companyName" data-translate="company_name">Название компании/фермы</label>
+                        <input type="text" id="companyName" data-translate-placeholder="company_placeholder"
+                            placeholder="Введите название компании или фермы" required>
                     </div>
 
                     <div class="input-group">
-                        <label for="agentOperator" data-translate="agent_operator">Агент/Оператор:</label>
+                        <label for="agentOperator" data-translate="agent_operator">Агент/Оператор</label>
                         <select id="agentOperator" required>
                             <option value="" data-translate="select_agent">Выберите агента/оператора</option>
                             <option value="Agri-HR">Agri-HR</option>
@@ -42,7 +62,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label for="monthsWorked" data-translate="months_worked">Количество месяцев работы:</label>
+                        <label for="monthsWorked" data-translate="months_worked">Количество месяцев работы</label>
                         <select id="monthsWorked" required>
                             <option value="" data-translate="select_months">Выберите количество месяцев</option>
                             <option value="1" data-translate="month_1">1 месяц</option>
@@ -61,21 +81,24 @@
                     </div>
                 </div>
 
+                <!-- Financial Info Section -->
                 <div class="form-section">
-                    <h3 data-translate="financial_info">Финансовая информация</h3>
-                    
+                    <h3>📋 <span data-translate="financial_info">Финансовая информация</span></h3>
+
                     <div class="input-group">
-                        <label for="annualIncome" data-translate="income_period">Общий доход за период (£):</label>
-                        <input type="number" id="annualIncome" data-translate-placeholder="income_placeholder" placeholder="Введите ваш доход за весь период работы" required>
+                        <label for="annualIncome" data-translate="income_period">Общий доход за период (£)</label>
+                        <input type="number" id="annualIncome" data-translate-placeholder="income_placeholder"
+                            placeholder="Введите ваш доход за весь период работы" inputmode="decimal" required>
                     </div>
 
                     <div class="input-group">
-                        <label for="taxPaid" data-translate="tax_withheld">Удержанный налог (£):</label>
-                        <input type="number" id="taxPaid" data-translate-placeholder="tax_placeholder" placeholder="Введите сумму удержанного налога" required>
+                        <label for="taxPaid" data-translate="tax_withheld">Удержанный налог (£)</label>
+                        <input type="number" id="taxPaid" data-translate-placeholder="tax_placeholder"
+                            placeholder="Введите сумму удержанного налога" inputmode="decimal" required>
                     </div>
 
                     <div class="input-group">
-                        <label for="taxYear" data-translate="tax_year">Налоговый год:</label>
+                        <label for="taxYear" data-translate="tax_year">Налоговый год</label>
                         <select id="taxYear" required>
                             <option value="" data-translate="select_tax_year">Выберите налоговый год</option>
                             <option value="2025-26">2025-26</option>
@@ -86,28 +109,34 @@
                     </div>
                 </div>
 
-                <button type="submit" data-translate="calculate_button">Рассчитать возврат</button>
+                <button type="submit" id="calcBtn" data-translate="calculate_button">
+                    🧮 Рассчитать возврат
+                </button>
+
             </form>
 
+            <!-- Results -->
             <div id="results" class="results hidden">
-                <h2 data-translate="result_title">Результат расчета</h2>
-                
+                <h2 data-translate="result_title">📊 Результат расчета</h2>
+
+                <!-- Work Summary -->
                 <div class="work-summary">
-                    <h3 data-translate="work_summary">Информация о работе</h3>
+                    <h3>🏢 <span data-translate="work_summary">Информация о работе</span></h3>
                     <div class="summary-item">
                         <span data-translate="company_farm">Компания/Ферма:</span>
-                        <span id="summaryCompany">-</span>
+                        <span id="summaryCompany">—</span>
                     </div>
                     <div class="summary-item">
                         <span data-translate="agent_operator_result">Агент/Оператор:</span>
-                        <span id="summaryAgent">-</span>
+                        <span id="summaryAgent">—</span>
                     </div>
                     <div class="summary-item">
                         <span data-translate="work_period">Период работы:</span>
-                        <span id="summaryPeriod">-</span>
+                        <span id="summaryPeriod">—</span>
                     </div>
                 </div>
 
+                <!-- Number breakdown -->
                 <div class="result-item">
                     <span data-translate="income_for_period">Доход за период:</span>
                     <span id="actualIncome">£0</span>
@@ -120,26 +149,34 @@
                     <span data-translate="tax_paid">Удержанный налог:</span>
                     <span id="paidTax">£0</span>
                 </div>
-                <!-- Яркий блок возврата -->
+
+                <!-- 🎉 Refund highlight -->
                 <div id="refundHighlight" class="refund-highlight">
                     <div class="refund-title" data-translate="refund_title">🎉 Ваш возврат от HMRC</div>
                     <div class="refund-amount" id="refundAmount">£0</div>
-                    <div class="refund-subtitle" data-translate="refund_disclaimer">Этот расчет является ориентировочным. Точная сумма будет подтверждена HMRC.</div>
+                    <div class="refund-subtitle" data-translate="refund_disclaimer">
+                        Этот расчет является ориентировочным. Точная сумма будет подтверждена HMRC.
+                    </div>
                 </div>
-                
-                <!-- Скрытый элемент для доплаты -->
+
+                <!-- ⚠️ Payment due (hidden by default) -->
                 <div class="result-item highlight" id="paymentItem" style="display: none;">
                     <span data-translate="payment_hmrc">Доплата в HMRC:</span>
                     <span id="paymentAmount">£0</span>
                 </div>
 
-                <!-- Рекламный блок - показывается после результата -->
+                <!-- Tax Breakdown -->
+                <div class="tax-breakdown">
+                    <h3>📐 <span data-translate="tax_breakdown">Детализация налога</span></h3>
+                    <div id="taxBreakdown"></div>
+                </div>
+
+                <!-- 💼 Promo / service block -->
                 <div id="taxServicePromo" class="tax-service-promo" style="display: none;">
                     <div class="promo-header">
                         <h3 data-translate="promo_title">💼 Нужна помощь с возвратом налогов?</h3>
                         <p data-translate="promo_subtitle">Получите профессиональную помощь для возврата налогов</p>
                     </div>
-                    
                     <div class="promo-content">
                         <div class="service-info">
                             <h4>White Tax Returns</h4>
@@ -147,18 +184,21 @@
                                 <div class="feature">
                                     <span class="feature-icon">✅</span>
                                     <span>
-                                        <a href="https://find-and-update.company-information.service.gov.uk/company/14317468" target="_blank" class="company-link" data-translate="company_registered">
+                                        <a href="https://find-and-update.company-information.service.gov.uk/company/14317468"
+                                            target="_blank" class="company-link" data-translate="company_registered">
                                             Официальное зарегистрированное налоговое агентство
                                         </a>
                                     </span>
                                 </div>
                                 <div class="feature">
                                     <span class="feature-icon">🤝</span>
-                                    <span data-translate="company_partner">Официальный бухгалтерский отдел Fruitful Jobs и Agri-HR</span>
+                                    <span data-translate="company_partner">Официальный бухгалтерский отдел Fruitful Jobs
+                                        и Agri-HR</span>
                                 </div>
                                 <div class="feature">
                                     <span class="feature-icon">📋</span>
-                                    <span data-translate="full_support">Полное сопровождение подачи декларации в HMRC</span>
+                                    <span data-translate="full_support">Полное сопровождение подачи декларации в
+                                        HMRC</span>
                                 </div>
                                 <div class="feature">
                                     <span class="feature-icon">💰</span>
@@ -166,9 +206,9 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="promo-cta">
-                            <a href="https://whitetax.site/uzbekistan" target="_blank" class="cta-button">
+                            <a href="https://whitetax.site/uzbekistan" target="_blank" class="cta-button"
+                                id="whitetaxBtn">
                                 <span data-translate="apply_button">👉 Подать заявку</span>
                                 <small>whitetax.site/uzbekistan</small>
                             </a>
@@ -176,43 +216,75 @@
                     </div>
                 </div>
 
-                <div class="tax-breakdown">
-                    <h3 data-translate="tax_breakdown">Детализация налога:</h3>
-                    <div id="taxBreakdown"></div>
-                </div>
             </div>
-        </div>
+            <!-- /results -->
 
+        </div>
+        <!-- /calculator -->
+
+        <!-- Tax Rates Info -->
         <div class="info">
-            <h3 data-translate="tax_rates_title">Информация о налоговых ставках UK (2025-26)</h3>
+            <h3>ℹ️ <span data-translate="tax_rates_title">Налоговые ставки UK (2025-26)</span></h3>
             <ul>
-                <li data-translate="personal_allowance">Необлагаемый минимум: £12,570</li>
-                <li data-translate="basic_rate">Базовая ставка (20%): £12,571 - £50,270</li>
-                <li data-translate="higher_rate">Повышенная ставка (40%): £50,271 - £125,140</li>
-                <li data-translate="additional_rate">Дополнительная ставка (45%): свыше £125,140</li>
+                <li data-translate="personal_allowance">Необлагаемый минимум: <b>£12,570</b></li>
+                <li data-translate="basic_rate">Базовая ставка 20%: £12,571 — £50,270</li>
+                <li data-translate="higher_rate">Повышенная ставка 40%: £50,271 — £125,140</li>
+                <li data-translate="additional_rate">Дополнительная ставка 45%: свыше £125,140</li>
             </ul>
         </div>
 
-        <!-- Футер с информацией об авторе -->
+        <!-- Footer -->
         <footer class="footer">
-            <div class="footer-content">
-                <div class="author-info">
-                    <span class="author-label" data-translate="developed_by">Разработано:</span>
-                    <a href="https://t.me/ZoirUK" target="_blank" class="author-link">
-                        <span class="author-icon">👨‍💻</span>
-                        <span class="author-name">ZoirUK</span>
-                        <span class="telegram-icon">📱</span>
-                    </a>
-                </div>
-                <div class="footer-note">
-                    <span data-translate="footer_note">Бесплатный калькулятор для расчета возврата налогов HMRC</span>
-                </div>
+            <div class="footer-minimal">
+                <span class="author-label" data-translate="developed_by">Разработано:</span>
+                <a href="https://t.me/Zoir_UK" target="_blank" class="author-link-minimal">
+                    <span>👨‍💻 Zoir_UK</span>
+                </a>
             </div>
         </footer>
+
+    </div>
+    <!-- /container -->
+
+    <!-- About Project Modal (MD3 Dialog / Bottom Sheet) -->
+    <div id="aboutModal" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content-container">
+            <div class="about-modal-box">
+                <h3 data-translate="modal_title">О проекте и партнерстве</h3>
+                <div class="modal-body">
+                    <p data-translate="modal_content">Этот инструмент разработан Сообществом сезонных рабочих в
+                        партнерстве с White Tax Returns — официально зарегистрированным налоговым агентством в
+                        Великобритании.</p>
+                    <h4 data-translate="modal_mission_title" style="margin-top: 16px; margin-bottom: 8px;">Цель проекта:
+                    </h4>
+                    <p data-translate="modal_mission_text">Инструмент создан для того, чтобы помочь участникам
+                        сообщества эффективно, прозрачно и бесплатно рассчитывать свои налоговые льготы. Все алгоритмы
+                        калькулятора основаны на актуальных данных налогового законодательства Великобритании на 2026-27
+                        год.</p>
+
+                    <div class="dev-promo-section"
+                        style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--md-outline);">
+                        <h4 data-translate="modal_dev_title" style="margin-bottom: 8px; color: var(--md-primary);">
+                            Разработка цифровых решений</h4>
+                        <p data-translate="modal_dev_text" style="font-size: 14px;">Этот калькулятор — пример того, как
+                            технологии могут упрощать сложные процессы и приносить реальную пользу
+                            людям.<br><br>Создаются решения, которые упрощают взаимодействие, повышают доверие и дают
+                            точный результат.</p>
+                        <a href="https://t.me/Zoir_UK" target="_blank" class="t-link"
+                            style="display: inline-block; margin-top: 12px; font-weight: 600;"
+                            data-translate="modal_dev_link">👉 Обсудить разработку</a>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="closeAboutBtn" class="md3-text-btn" data-translate="close_btn">Понятно</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Модальное окно выбора языка -->
-    <div id="languageModal" class="language-modal">
+    <!-- Language Modal (bottom sheet) -->
+    <div id="languageModal" class="language-modal hidden">
         <div class="language-modal-content">
             <div class="modal-header">
                 <h2>🌍 Choose Your Language</h2>
@@ -249,5 +321,53 @@
 
     <script src="translations.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        // ── Telegram Init ──────────────────────────────
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+
+        // ── Smooth app reveal ──────────────────────────
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const container = document.getElementById('main-container');
+                if (container) container.classList.add('visible');
+            }, 80);
+        });
+
+        // ── Lang modal close on backdrop (redundant safety) ────
+        const langModal = document.getElementById('languageModal');
+        if (langModal) {
+            langModal.addEventListener('click', (e) => {
+                if (e.target === langModal) langModal.classList.add('hidden');
+            });
+        }
+
+        // ── Haptic on submit ───────────────────────────
+        const taxForm = document.getElementById('taxForm');
+        if (taxForm) {
+            taxForm.addEventListener('submit', () => {
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                    window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+                }
+            });
+        }
+
+        // ── WhiteTax CTA — open in Telegram if available
+        const whitetaxBtn = document.getElementById('whitetaxBtn');
+        if (whitetaxBtn) {
+            whitetaxBtn.addEventListener('click', (e) => {
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.platform &&
+                    window.Telegram.WebApp.platform !== 'unknown') {
+                    e.preventDefault();
+                    window.Telegram.WebApp.openLink('https://whitetax.site/uzbekistan');
+                }
+            });
+        }
+    </script>
+
 </body>
+
 </html>

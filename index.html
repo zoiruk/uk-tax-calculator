@@ -38,79 +38,116 @@
         <div class="calculator">
             <form id="taxForm">
 
-                <!-- Work Info Section -->
+                <!-- Multi-Farm Section -->
                 <div class="form-section">
                     <h3>🏢 <span data-translate="work_info">Информация о работе</span></h3>
+                    
+                    <div id="farmList">
+                        <!-- First farm record (always present) -->
+                        <div class="farm-record">
+                            <div class="farm-record-header">
+                                <span class="farm-number" data-translate="farm_label">Ферма/Компания</span>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label data-translate="tax_year">Налоговый год</label>
+                                <select class="farm-year" required>
+                                    <option value="" data-translate="select_tax_year">Выберите налоговый год</option>
+                                    <option value="2026-27" selected>2026-27</option>
+                                    <option value="2025-26">2025-26</option>
+                                    <option value="2024-25">2024-25</option>
+                                    <option value="2023-24">2023-24</option>
+                                    <option value="2022-23">2022-23</option>
+                                </select>
+                            </div>
 
-                    <div class="input-group">
-                        <label for="companyName" data-translate="company_name">Название компании/фермы</label>
-                        <input type="text" id="companyName" data-translate-placeholder="company_placeholder"
-                            placeholder="Введите название компании или фермы" required>
+                            <div class="input-group">
+                                <label data-translate="company_name">Название компании/фермы</label>
+                                <input type="text" class="farm-name" data-translate-placeholder="company_placeholder"
+                                    placeholder="Введите название компании или фермы" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label data-translate="agent_operator">Агент/Оператор</label>
+                                <select class="farm-agent" required>
+                                    <option value="" data-translate="select_agent">Выберите агента/оператора</option>
+                                    <option value="Agri-HR">Agri-HR</option>
+                                    <option value="Concordia">Concordia</option>
+                                    <option value="Fruitful Jobs">Fruitful Jobs</option>
+                                    <option value="Pro-Force">Pro-Force</option>
+                                    <option value="HOPS">HOPS</option>
+                                    <option value="Другой" data-translate="other">Другой</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label>
+                                    <span data-translate="months_worked">Количество месяцев работы</span>
+                                    <span class="info-icon" onclick="showInfo('months_info_text')">ⓘ</span>
+                                </label>
+                                <select class="farm-months" required>
+                                    <option value="" data-translate="select_months">Выберите количество месяцев</option>
+                                    <option value="1">1 месяц</option>
+                                    <option value="2">2 месяца</option>
+                                    <option value="3">3 месяца</option>
+                                    <option value="4" selected>4 месяца</option>
+                                    <option value="5">5 месяцев</option>
+                                    <option value="6">6 месяцев</option>
+                                    <option value="7">7 месяцев</option>
+                                    <option value="8">8 месяцев</option>
+                                    <option value="9">9 месяцев</option>
+                                    <option value="10">10 месяцев</option>
+                                    <option value="11">11 месяцев</option>
+                                    <option value="12">12 месяцев (полный год)</option>
+                                </select>
+                            </div>
+
+                                <div class="input-row">
+                                    <div class="input-group">
+                                        <label>
+                                            <span data-translate="income_period">Доход (£)</span>
+                                            <span class="info-icon" onclick="showInfo('income_info_text')">ⓘ</span>
+                                        </label>
+                                        <input type="text" class="farm-income" data-translate-placeholder="income_placeholder"
+                                            placeholder="Сумма" inputmode="decimal" required>
+                                    </div>
+    
+                                <div class="input-group">
+                                    <label>
+                                        <span data-translate="tax_withheld">Налог (£)</span>
+                                        <span class="info-icon" onclick="showInfo('tax_paid_info_text')">ⓘ</span>
+                                    </label>
+                                    <input type="text" class="farm-tax" data-translate-placeholder="tax_placeholder"
+                                        placeholder="Налог" inputmode="decimal" required>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="input-group">
-                        <label for="agentOperator" data-translate="agent_operator">Агент/Оператор</label>
-                        <select id="agentOperator" required>
-                            <option value="" data-translate="select_agent">Выберите агента/оператора</option>
-                            <option value="Agri-HR">Agri-HR</option>
-                            <option value="Concordia">Concordia</option>
-                            <option value="Fruitful Jobs">Fruitful Jobs</option>
-                            <option value="Pro-Force">Pro-Force</option>
-                            <option value="HOPS">HOPS</option>
-                            <option value="Другой" data-translate="other">Другой</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="monthsWorked" data-translate="months_worked">Количество месяцев работы</label>
-                        <select id="monthsWorked" required>
-                            <option value="" data-translate="select_months">Выберите количество месяцев</option>
-                            <option value="1" data-translate="month_1">1 месяц</option>
-                            <option value="2" data-translate="month_2">2 месяца</option>
-                            <option value="3" data-translate="month_3">3 месяца</option>
-                            <option value="4" data-translate="month_4">4 месяца</option>
-                            <option value="5" data-translate="month_5">5 месяцев</option>
-                            <option value="6" data-translate="month_6">6 месяцев</option>
-                            <option value="7" data-translate="month_7">7 месяцев</option>
-                            <option value="8" data-translate="month_8">8 месяцев</option>
-                            <option value="9" data-translate="month_9">9 месяцев</option>
-                            <option value="10" data-translate="month_10">10 месяцев</option>
-                            <option value="11" data-translate="month_11">11 месяцев</option>
-                            <option value="12" data-translate="month_12">12 месяцев (полный год)</option>
-                        </select>
-                    </div>
+                    <!-- Add Farm Button -->
+                    <button type="button" id="addFarmBtn" class="add-btn">
+                        <span data-translate="add_farm_btn">➕ Добавить другое место работы</span>
+                    </button>
                 </div>
 
-                <!-- Financial Info Section -->
-                <div class="form-section">
-                    <h3>📋 <span data-translate="financial_info">Финансовая информация</span></h3>
-
-                    <div class="input-group">
-                        <label for="annualIncome" data-translate="income_period">Общий доход за период (£)</label>
-                        <input type="number" id="annualIncome" data-translate-placeholder="income_placeholder"
-                            placeholder="Введите ваш доход за весь период работы" inputmode="decimal" required>
+                <!-- Multi-Farm Live Summary -->
+                <div id="live-calc-summary" class="live-summary-compact hidden">
+                    <div class="live-sum-item">
+                        <span data-translate="total_income_all">Общий доход (все фермы):</span>
+                        <b id="live-total-income">£0.00</b>
                     </div>
-
-                    <div class="input-group">
-                        <label for="taxPaid" data-translate="tax_withheld">Удержанный налог (£)</label>
-                        <input type="number" id="taxPaid" data-translate-placeholder="tax_placeholder"
-                            placeholder="Введите сумму удержанного налога" inputmode="decimal" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="taxYear" data-translate="tax_year">Налоговый год</label>
-                        <select id="taxYear" required>
-                            <option value="" data-translate="select_tax_year">Выберите налоговый год</option>
-                            <option value="2025-26">2025-26</option>
-                            <option value="2024-25">2024-25</option>
-                            <option value="2023-24">2023-24</option>
-                            <option value="2022-23">2022-23</option>
-                        </select>
+                    <div class="live-sum-item">
+                        <span data-translate="total_tax_all">Всего удержано налога:</span>
+                        <b id="live-total-tax">£0.00</b>
                     </div>
                 </div>
 
                 <button type="submit" id="calcBtn" data-translate="calculate_button">
                     🧮 Рассчитать возврат
+                </button>
+
+                <button type="button" id="resetBtn" data-translate="reset_button" class="secondary-btn">
+                    🔄 Начать заново
                 </button>
 
             </form>

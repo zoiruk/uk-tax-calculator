@@ -7,6 +7,7 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqdaSVyuWC7K
 
 // Налоговые пороги для разных лет (UK Tax Bands)
 const taxBands = {
+    '2026-27': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
     '2025-26': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
     '2024-25': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
     '2023-24': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
@@ -27,9 +28,25 @@ if (window.Telegram?.WebApp) {
             localStorage.setItem('selectedLanguage', user.language_code);
         }
     }
-    console.log('✅ Telegram Web App инициализирован');
+    console.log('✅ Telegram Web App initialized');
 } else {
-    console.log('ℹ️ Приложение запущено вне Telegram');
+    console.log('ℹ️ Running outside Telegram');
+}
+
+// Haptic Feedback Helper
+function triggerHaptic(type = 'light') {
+    if (window.Telegram?.WebApp?.HapticFeedback) {
+        const haptic = window.Telegram.WebApp.HapticFeedback;
+        switch (type) {
+            case 'light': haptic.impactOccurred('light'); break;
+            case 'medium': haptic.impactOccurred('medium'); break;
+            case 'heavy': haptic.impactOccurred('heavy'); break;
+            case 'success': haptic.notificationOccurred('success'); break;
+            case 'error': haptic.notificationOccurred('error'); break;
+            case 'warning': haptic.notificationOccurred('warning'); break;
+            default: haptic.impactOccurred('light'); break;
+        }
+    }
 }
 
 // =================================================================================
@@ -85,9 +102,9 @@ function formatCurrency(amount) {
 }
 
 function getMonthsText(months) {
-    if (months === 1) return 'месяц';
-    if (months >= 2 && months <= 4) return 'месяца';
-    return 'месяцев';
+    if (months === 1) return tr('month_1_label') || 'month';
+    if (months >= 2 && months <= 4) return tr('months_2_4_label') || 'months';
+    return tr('months_many_label') || 'months';
 }
 
 function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, agentOperator) {
@@ -156,127 +173,355 @@ function displayResults(income, taxPaid, taxYear, monthsWorked, companyName, age
 // 3. БЕЗОПАСНАЯ ОТПРАВКА ДАННЫХ НА СЕРВЕР (Apps Script)
 // =================================================================================
 
-// Объединяет отправку в Sheets и Telegram на стороне сервера
-async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWorked, agentOperator, companyName, taxYear) {
-    try {
-        const data = {
-            // Преобразуем числа в строки для корректной передачи через URLSearchParams
-            income: income.toString(),
-            totalTax: totalTax.toString(), 
-            taxPaid: taxPaid.toString(),
-            refund: refund.toString(),
-            monthsWorked: monthsWorked.toString(),
-            agentOperator: agentOperator || 'Не указан',
-            companyName: companyName || 'Не указана',
-            taxYear: taxYear,
-            isRefund: refund > 0 ? 'true' : 'false', 
-            currentLang: localStorage.getItem('selectedLanguage') || 'ru'
-        };
-
-        console.log('📊 Отправляем данные на сервер (Sheets + Telegram)...', data);
-
-        // ✅ ИСПРАВЛЕНИЕ: Используем URLSearchParams и application/x-www-form-urlencoded
-        const formData = new URLSearchParams(data).toString();
-        
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                 // Этот Content-Type обязательно должен соответствовать URLSearchParams
-                 'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formData // Отправляем строку параметров
-        });
-
-        const responseText = await response.text();
-        console.log('📄 Ответ от сервера:', responseText);
-
-        if (response.ok) {
-            console.log('✅ Данные успешно записаны в Sheets и отправлены в Telegram сервером.');
-        } else {
-             console.log('⚠️ Ошибка сети или сервера при отправке. Статус:', response.status);
-        }
-
-    } catch (error) {
-        console.log('❌ Ошибка сети при отправке на сервер:', error);
-    }
-}
-
 // =================================================================================
 // 4. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ И ОБРАБОТЧИКИ
 // =================================================================================
 
-function parseCleanNumber(value) {
-    if (!value) return 0;
-    // Убираем все символы кроме цифр
-    let cleanValue = value.toString().replace(/[^\d]/g, ''); 
-    const result = parseInt(cleanValue);
-    return isNaN(result) ? 0 : result;
-}
+/**
+ * Multi-Farm Management
+ */
+function addFarmRecord() {
+    const container = document.getElementById('farmList');
+    const records = container.querySelectorAll('.farm-record');
+    
+    // Create new record from the first one
+    const newRecord = records[0].cloneNode(true);
+    
+    // Clear inputs
+    newRecord.querySelectorAll('input').forEach(input => input.value = '');
+    newRecord.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+    
+    // Add remove button if not exists
+    let header = newRecord.querySelector('.farm-record-header');
+    if (!header.querySelector('.remove-btn')) {
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-btn';
+        removeBtn.setAttribute('data-translate', 'remove_farm_btn');
+        removeBtn.textContent = '❌ Удалить';
+        removeBtn.onclick = function() {
+            newRecord.remove();
+            updateFarmNumbers();
+            hideResults();
+        };
+        header.appendChild(removeBtn);
+    }
+    
+    container.appendChild(newRecord);
+    updateFarmNumbers();
+    
+    // Re-apply formatting and change listeners to new inputs
+    newRecord.querySelectorAll('.farm-income, .farm-tax').forEach(input => {
+        addFormatting(input);
+        input.addEventListener('input', hideResults);
+    });
+    newRecord.querySelectorAll('input, select').forEach(el => el.addEventListener('change', hideResults));
+    
+    // Hide results if select values change
+    newRecord.querySelectorAll('select').forEach(select => select.addEventListener('change', hideResults));
+    
+    // Re-run translations for the new block
+    const lang = localStorage.getItem('selectedLanguage') || 'ru';
+    if (typeof changeLanguage === 'function') changeLanguage(lang);
 
-function formatNumberInput(input) {
-    const cursorPosition = input.selectionStart;
-    const originalValue = input.value;
-    if (!originalValue || originalValue.trim() === '') return;
-    const cleanValue = parseCleanNumber(originalValue);
-
-    if (cleanValue > 0 && !isNaN(cleanValue)) {
-        const formattedValue = cleanValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-        if (input.value !== formattedValue && Math.abs(cleanValue - parseCleanNumber(input.value)) > 0.01) {
-            input.value = formattedValue;
-            const newPosition = Math.min(cursorPosition, formattedValue.length);
-            setTimeout(() => { input.setSelectionRange(newPosition, newPosition); }, 0);
-        }
+    // Haptic feedback
+    if (window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     }
 }
 
-document.getElementById('taxForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const income = parseCleanNumber(document.getElementById('annualIncome').value);
-    const taxPaid = parseCleanNumber(document.getElementById('taxPaid').value);
-    const taxYear = document.getElementById('taxYear').value;
-    const monthsWorked = parseInt(document.getElementById('monthsWorked').value);
-    const companyName = document.getElementById('companyName').value.trim();
-    const agentOperator = document.getElementById('agentOperator').value.trim();
-
-    if (income <= 0 || taxPaid < 0 || !monthsWorked) {
-        // ... (Ваша логика валидации с alert)
-        return;
-    }
-
-    displayResults(income, taxPaid, taxYear, monthsWorked, companyName, agentOperator);
-});
-
-// Добавляем форматирование и обработчики
-const incomeInput = document.getElementById('annualIncome');
-const taxPaidInput = document.getElementById('taxPaid');
-
-function addFormatting(input) {
-    input.addEventListener('blur', function () { formatNumberInput(input); });
-    input.addEventListener('keypress', function (e) {
-        const allowedChars = /[0-9\s]/;
-        if (!allowedChars.test(e.key) && !['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-            e.preventDefault();
+function updateFarmNumbers() {
+    const records = document.querySelectorAll('.farm-record');
+    records.forEach((record, index) => {
+        const numLabel = record.querySelector('.farm-number');
+        if (numLabel) {
+            const baseText = tr('farm_label');
+            numLabel.textContent = `${baseText} #${index + 1}`;
         }
     });
 }
 
-addFormatting(incomeInput);
-addFormatting(taxPaidInput);
-
-function hideResults() {
-    const resultsDiv = document.getElementById('results');
-    const promoBlock = document.getElementById('taxServicePromo');
-    if (resultsDiv && !resultsDiv.classList.contains('hidden')) { resultsDiv.classList.add('hidden'); }
-    if (promoBlock) { promoBlock.style.display = 'none'; }
+/**
+ * Data Collection & Formatting
+ */
+function parseCleanNumber(value) {
+    if (!value) return 0;
+    let cleanValue = value.toString().replace(/[^\d.]/g, ''); 
+    const result = parseFloat(cleanValue);
+    return isNaN(result) ? 0 : result;
 }
 
-document.getElementById('annualIncome').addEventListener('input', hideResults);
-document.getElementById('taxPaid').addEventListener('input', hideResults);
-document.getElementById('taxYear').addEventListener('change', hideResults);
-document.getElementById('monthsWorked').addEventListener('change', hideResults);
-document.getElementById('companyName').addEventListener('input', hideResults);
-document.getElementById('agentOperator').addEventListener('change', hideResults);
+function formatNumberInput(input) {
+    const originalValue = input.value;
+    if (!originalValue) return;
+    const cleanValue = parseCleanNumber(originalValue);
+    if (cleanValue > 0) {
+        input.value = cleanValue.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    }
+}
+
+function addFormatting(input) {
+    input.addEventListener('blur', function () { formatNumberInput(input); });
+}
+
+// Global Haptic Feedback Wrapper
+function hapticImpact(type = 'light') {
+    if (window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred(type);
+    }
+}
+
+// Logic for results display
+function displayResults() {
+    const farmRecords = document.querySelectorAll('.farm-record');
+    
+    let totalIncome = 0;
+    let totalTaxPaid = 0;
+    let totalTaxDue = 0;
+    let totalMonths = 0;
+    let yearsMap = {}; // Group by Tax Year
+    let farmsData = [];
+
+    farmRecords.forEach(record => {
+        const year = record.querySelector('.farm-year').value;
+        const name = record.querySelector('.farm-name').value.trim() || tr('not_specified');
+        const agent = record.querySelector('.farm-agent').value || tr('not_specified');
+        const months = parseInt(record.querySelector('.farm-months').value) || 0;
+        const income = parseCleanNumber(record.querySelector('.farm-income').value);
+        const tax = parseCleanNumber(record.querySelector('.farm-tax').value);
+        
+        if (!yearsMap[year]) {
+            yearsMap[year] = { income: 0, taxPaid: 0 };
+        }
+        yearsMap[year].income += income;
+        yearsMap[year].taxPaid += tax;
+        
+        totalIncome += income;
+        totalTaxPaid += tax;
+        totalMonths += months;
+        farmsData.push({ year, name, agent, months, income, taxPaid: tax });
+    });
+
+    if (totalIncome <= 0 || totalMonths <= 0) {
+        alert(tr('invalid_input_msg') || 'Please fill in all required fields.');
+        return;
+    }
+
+    // --- SKELETON LOADER REMOVED (Show Results Instantly) ---
+    renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, totalTaxPaid, totalMonths);
+}
+
+function renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, totalTaxPaid, totalMonths) {
+    let allBreakdowns = [];
+    Object.keys(yearsMap).forEach(year => {
+        const { totalTax, breakdown } = calculateIncomeTax(yearsMap[year].income, year);
+        totalTaxDue += totalTax;
+        allBreakdowns = allBreakdowns.concat(breakdown);
+    });
+
+    const refund = totalTaxPaid - totalTaxDue;
+    const commonYear = farmsData[0].year; // Primary year for summary
+
+    // Update Summary Header
+    document.getElementById('summaryCompany').textContent = farmsData.map(f => f.name).join(', ');
+    document.getElementById('summaryAgent').textContent = Array.from(new Set(farmsData.map(f => f.agent))).join(', ');
+    document.getElementById('summaryPeriod').textContent = `${totalMonths} ${getMonthsText(totalMonths)}`;
+
+    // Update Totals
+    document.getElementById('actualIncome').textContent = formatCurrency(totalIncome);
+    document.getElementById('taxDue').textContent = formatCurrency(totalTaxDue);
+    document.getElementById('paidTax').textContent = formatCurrency(totalTaxPaid);
+
+    const refundHighlight = document.getElementById('refundHighlight');
+    const paymentItem = document.getElementById('paymentItem');
+    const refundAmountElement = document.getElementById('refundAmount');
+    const paymentAmountElement = document.getElementById('paymentAmount');
+
+    if (refund > 0) {
+        refundHighlight.style.display = 'block';
+        paymentItem.style.display = 'none';
+        refundAmountElement.textContent = formatCurrency(refund);
+        triggerHaptic('success');
+    } else {
+        refundHighlight.style.display = 'none';
+        paymentItem.style.display = 'flex';
+        paymentAmountElement.textContent = formatCurrency(Math.abs(refund));
+        triggerHaptic('warning');
+    }
+
+    // Breakdown
+    const breakdownContainer = document.getElementById('taxBreakdown');
+    breakdownContainer.innerHTML = '';
+    allBreakdowns.forEach(item => {
+        if (item.taxableAmount > 0) {
+            const div = document.createElement('div');
+            div.className = 'breakdown-item';
+            div.innerHTML = `<span>${item.range} (${item.rate})</span><span>${formatCurrency(item.tax)}</span>`;
+            breakdownContainer.appendChild(div);
+        }
+    });
+
+    document.getElementById('results').classList.remove('hidden');
+    // Problem 1: Auto-scroll to results for better UX
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Build human-readable summary for Telegram (Rule 20 Reliability)
+    let farmsText = '';
+    farmsData.forEach((f, idx) => {
+        farmsText += `• <b>Firma ${idx + 1}:</b> ${f.name} (${f.year}) Daromad: ${formatCurrency(f.income)} | Tax: ${formatCurrency(f.taxPaid)} | ${f.months} oy\n`;
+    });
+
+    // Send to Apps Script (One consolidated sync)
+    sendDataToAppsScript(totalIncome, totalTaxDue, totalTaxPaid, refund, totalMonths, 
+                        farmsData[0].agent, farmsData[0].name, commonYear, farmsText, refund > 0);
+
+    setTimeout(() => {
+        const promoBlock = document.getElementById('taxServicePromo');
+        if (promoBlock) promoBlock.style.display = 'block';
+    }, 1500);
+}
+
+async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWorked, agent, company, taxYear, farmsText, isRefund) {
+    try {
+        const data = {
+            type: 'tax_sync',
+            income: income.toString(),
+            taxPaid: taxPaid.toString(),
+            totalTax: totalTax.toString(),
+            refund: refund.toString(),
+            monthsWorked: monthsWorked.toString(),
+            agentOperator: agent,
+            companyName: company,
+            taxYear: taxYear,
+            farmsText: farmsText, // Pre-formatted text to bypass JSON parsing issues
+            isRefund: isRefund.toString(),
+            userId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'anonymous'
+        };
+
+        // Single fetch call (Rule 2: Reliable Data Sync)
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data).toString()
+        });
+
+    } catch (e) { console.error('Data sync failed', e); }
+}
+
+function tr(key) {
+    const lang = localStorage.getItem('selectedLanguage') || 'ru';
+    return (translations[lang] && translations[lang][key]) ? translations[lang][key] : key;
+}
+
+/**
+ * Event Listeners
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // Formatting for initial inputs
+    document.querySelectorAll('.farm-income, .farm-tax').forEach(addFormatting);
+    
+    // Add Farm Button
+    const addBtn = document.getElementById('addFarmBtn');
+    if (addBtn) addBtn.onclick = addFarmRecord;
+
+    // Form submission
+    const form = document.getElementById('taxForm');
+    if (form) {
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            displayResults();
+        };
+    }
+
+    // Live Updates & Results hiding
+    document.addEventListener('input', (e) => {
+        if (e.target.closest('#taxForm')) {
+            hideResults();
+            updateLiveSummary();
+        }
+    });
+
+    // Reset Button
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) resetBtn.onclick = resetForm;
+
+    // Initial Onboarding (Rules 2 & 32)
+    setTimeout(() => {
+        const addBtn = document.getElementById('addFarmBtn');
+        if (addBtn) addBtn.classList.add('pulse-onboarding');
+        setTimeout(() => addBtn?.classList.remove('pulse-onboarding'), 6000);
+    }, 1000);
+
+    initAboutModal();
+});
+
+function updateLiveSummary() {
+    const records = document.querySelectorAll('.farm-record');
+    const summaryBlock = document.getElementById('live-calc-summary');
+    
+    if (records.length <= 1) {
+        if (summaryBlock) summaryBlock.classList.add('hidden');
+        return;
+    }
+    
+    // Show summary if more than one farm
+    if (summaryBlock) summaryBlock.classList.remove('hidden');
+    
+    let totalIncome = 0;
+    let totalTax = 0;
+    
+    document.querySelectorAll('.farm-income').forEach(input => {
+        totalIncome += parseFloat(input.value.replace(/[^0-9.]/g, '')) || 0;
+    });
+    document.querySelectorAll('.farm-tax').forEach(input => {
+        totalTax += parseFloat(input.value.replace(/[^0-9.]/g, '')) || 0;
+    });
+
+    const incomeEl = document.getElementById('live-total-income');
+    const taxEl = document.getElementById('live-total-tax');
+    
+    if (incomeEl) incomeEl.textContent = formatCurrency(totalIncome);
+    if (taxEl) taxEl.textContent = formatCurrency(totalTax);
+}
+
+function showInfo(key) {
+    triggerHaptic('light');
+    const text = tr(key);
+    if (window.Telegram?.WebApp) {
+        window.Telegram.WebApp.showAlert(text);
+    } else {
+        alert(text);
+    }
+}
+
+function hideResults() {
+    const results = document.getElementById('results');
+    if (results) results.classList.add('hidden');
+    const promo = document.getElementById('taxServicePromo');
+    if (promo) promo.style.display = 'none';
+    
+    // Contextual: Hide live summary if results are visible? (User might prefer to keep live summary context)
+    // For now we keep it visible as it's 'Live'
+}
+
+function resetForm() {
+    if (!confirm(tr('reset_confirm_msg') || 'Are you sure you want to start over?')) return;
+    
+    triggerHaptic('warning');
+    
+    // Clear farm list
+    const farmList = document.getElementById('farmList');
+    farmList.innerHTML = '';
+    
+    // Add one fresh record
+    addFarmRecord();
+    
+    // Hide results
+    hideResults();
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
 // =================================================================================
 // 5. ЛОГИКА МОДАЛЬНОГО ОКНА "О ПРОЕКТЕ"

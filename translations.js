@@ -83,6 +83,9 @@ const translations = {
         months_many_label: "месяцев",
         month_1_label: "месяц",
         months_2_4_label: "месяца",
+        net_income_label: "Чистый доход",
+        tax_label: "Налог",
+        invalid_input_msg: "Пожалуйста, заполните все обязательные поля.",
         footer_note: "Этот калькулятор разработан в сотрудничестве с White Tax Returns, чтобы помочь членам <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Сообщества сезонных рабочих</a> рассчитать налоговые льготы в Великобритании."
     },
     en: {
@@ -168,6 +171,9 @@ const translations = {
         months_many_label: "months",
         month_1_label: "month",
         months_2_4_label: "months",
+        net_income_label: "Net Income",
+        tax_label: "Tax",
+        invalid_input_msg: "Please fill in all required fields.",
         footer_note: "This calculator was developed in partnership with White Tax Returns to assist members of the <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Seasonal Workers' Community</a> in calculating tax benefits in the UK."
     },
     uz: {
@@ -253,6 +259,9 @@ const translations = {
         months_many_label: "oy",
         month_1_label: "oy",
         months_2_4_label: "oy",
+        net_income_label: "Sof foyda",
+        tax_label: "Soliq",
+        invalid_input_msg: "Iltimos, barcha kerakli maydonlarni to'ldiring.",
         footer_note: "Ushbu kalkulyator <a href=\"https://t.me/Mavsumiy_Ishchilar\" target=\"_blank\" class=\"t-link\">Mavsumiy Ishchilar Jamoasi</a> a'zolari uchun Buyuk Britaniyadagi soliq imtiyozlarini hisoblashda ko'maklashish maqsadida White Tax Returns bilan hamkorlikda ishlab chiqildi."
     },
     kk: {

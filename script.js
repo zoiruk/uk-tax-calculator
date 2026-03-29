@@ -58,7 +58,7 @@ function calculateIncomeTax(income, taxYear) {
     let tax = 0;
     let breakdown = [];
     let remainingIncome = income;
-    
+
     // Если доход меньше необлагаемого минимума
     if (income <= bands.personalAllowance) {
         breakdown.push({ range: `£0 - £${bands.personalAllowance.toLocaleString()}`, rate: '0%', taxableAmount: income, tax: 0 });
@@ -102,9 +102,9 @@ function formatCurrency(amount) {
 }
 
 function getMonthsText(months) {
-    if (months === 1) return tr('month_1_label') || 'month';
-    if (months >= 2 && months <= 4) return tr('months_2_4_label') || 'months';
-    return tr('months_many_label') || 'months';
+    if (months === 1) return tr('month_1_label');
+    if (months >= 2 && months <= 4) return tr('months_2_4_label');
+    return tr('months_many_label');
 }
 
 /* Logic for results display moved to line 275+ for multi-farm support */
@@ -123,14 +123,14 @@ function getMonthsText(months) {
 function addFarmRecord() {
     const container = document.getElementById('farmList');
     const records = container.querySelectorAll('.farm-record');
-    
+
     // Create new record from the first one
     const newRecord = records[0].cloneNode(true);
-    
+
     // Clear inputs
     newRecord.querySelectorAll('input').forEach(input => input.value = '');
     newRecord.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-    
+
     // Add remove button if not exists
     let header = newRecord.querySelector('.farm-record-header');
     if (!header.querySelector('.remove-btn')) {
@@ -139,35 +139,33 @@ function addFarmRecord() {
         removeBtn.className = 'remove-btn';
         removeBtn.setAttribute('data-translate', 'remove_farm_btn');
         removeBtn.textContent = '❌ Удалить';
-        removeBtn.onclick = function() {
+        removeBtn.onclick = function () {
             newRecord.remove();
             updateFarmNumbers();
             hideResults();
         };
         header.appendChild(removeBtn);
     }
-    
+
     container.appendChild(newRecord);
     updateFarmNumbers();
-    
+
+    // Haptic feedback
+    triggerHaptic('light');
+
     // Re-apply formatting and change listeners to new inputs
     newRecord.querySelectorAll('.farm-income, .farm-tax').forEach(input => {
         addFormatting(input);
         input.addEventListener('input', hideResults);
     });
     newRecord.querySelectorAll('input, select').forEach(el => el.addEventListener('change', hideResults));
-    
+
     // Hide results if select values change
     newRecord.querySelectorAll('select').forEach(select => select.addEventListener('change', hideResults));
-    
+
     // Re-run translations for the new block
     const lang = localStorage.getItem('selectedLanguage') || 'ru';
     if (typeof changeLanguage === 'function') changeLanguage(lang);
-
-    // Haptic feedback
-    if (window.Telegram?.WebApp?.HapticFeedback) {
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-    }
 }
 
 function updateFarmNumbers() {
@@ -186,7 +184,7 @@ function updateFarmNumbers() {
  */
 function parseCleanNumber(value) {
     if (!value) return 0;
-    let cleanValue = value.toString().replace(/[^\d.]/g, ''); 
+    let cleanValue = value.toString().replace(/[^\d.]/g, '');
     const result = parseFloat(cleanValue);
     return isNaN(result) ? 0 : result;
 }
@@ -214,7 +212,7 @@ function hapticImpact(type = 'light') {
 // Logic for results display
 function displayResults() {
     const farmRecords = document.querySelectorAll('.farm-record');
-    
+
     let totalIncome = 0;
     let totalTaxPaid = 0;
     let totalTaxDue = 0;
@@ -229,13 +227,13 @@ function displayResults() {
         const months = parseInt(record.querySelector('.farm-months').value) || 0;
         const income = parseCleanNumber(record.querySelector('.farm-income').value);
         const tax = parseCleanNumber(record.querySelector('.farm-tax').value);
-        
+
         if (!yearsMap[year]) {
             yearsMap[year] = { income: 0, taxPaid: 0 };
         }
         yearsMap[year].income += income;
         yearsMap[year].taxPaid += tax;
-        
+
         totalIncome += income;
         totalTaxPaid += tax;
         totalMonths += months;
@@ -243,12 +241,19 @@ function displayResults() {
     });
 
     if (totalIncome <= 0 || totalMonths <= 0) {
-        alert(tr('invalid_input_msg') || 'Please fill in all required fields.');
+        showInfo('invalid_input_msg');
         return;
     }
 
-    // --- SKELETON LOADER REMOVED (Show Results Instantly) ---
-    renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, totalTaxPaid, totalMonths);
+    // --- SKELETON LOADER (Premium feel) ---
+    const resultsPanel = document.getElementById('results');
+    resultsPanel.classList.remove('hidden');
+    resultsPanel.style.opacity = '0.5';
+
+    setTimeout(() => {
+        resultsPanel.style.opacity = '1';
+        renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, totalTaxPaid, totalMonths);
+    }, 300);
 }
 
 function renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, totalTaxPaid, totalMonths) {
@@ -289,7 +294,7 @@ function renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, total
         triggerHaptic('warning');
     }
 
-    // Breakdown
+    // Breakdown rendering
     const breakdownContainer = document.getElementById('taxBreakdown');
     breakdownContainer.innerHTML = '';
     allBreakdowns.forEach(item => {
@@ -301,33 +306,61 @@ function renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, total
         }
     });
 
+    // --- TAX CHART RENDERING (Zoir Premium) ---
+    renderTaxChart(totalIncome, totalTaxDue, refund);
+
     document.getElementById('results').classList.remove('hidden');
-    // Problem 1: Auto-scroll to results for better UX
     document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // Build human-readable summary for Telegram (Rule 20 Reliability)
+    // Build summary for Telegram
     let farmsText = '';
     const combinedCompanyName = farmsData.map(f => f.name).join(' & ');
     const combinedAgents = Array.from(new Set(farmsData.map(f => f.agent))).join(' & ');
-    
-    // Only send detailed farmsText if multiple farms exist to keep single-farm reports clean
+
     if (farmsData.length > 1) {
         farmsData.forEach((f, idx) => {
             farmsText += `• <b>Firma ${idx + 1}:</b> ${f.name} (${f.year}) Daromad: ${formatCurrency(f.income)} | Tax: ${formatCurrency(f.taxPaid)} | ${f.months} oy\n`;
         });
     }
 
-    // Send to Apps Script (One consolidated sync)
-    sendDataToAppsScript(totalIncome, totalTaxDue, totalTaxPaid, refund, totalMonths, 
-                        combinedAgents, combinedCompanyName, commonYear, farmsText, refund > 0);
+    // Send to Apps Script with Language context
+    const lang = localStorage.getItem('selectedLanguage') || 'ru';
+    sendDataToAppsScript(totalIncome, totalTaxDue, totalTaxPaid, refund, totalMonths,
+        combinedAgents, combinedCompanyName, commonYear, farmsText, refund > 0, lang);
 
     setTimeout(() => {
         const promoBlock = document.getElementById('taxServicePromo');
-        if (promoBlock) promoBlock.style.display = 'block';
-    }, 1500);
+        if (promoBlock) {
+            promoBlock.style.display = 'block';
+            promoBlock.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }, 1000);
 }
 
-async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWorked, agent, company, taxYear, farmsText, isRefund) {
+function renderTaxChart(income, tax, refund) {
+    const chartContainer = document.getElementById('taxChartArea');
+    if (!chartContainer) return;
+
+    const netIncome = income - tax;
+    const netPercent = Math.max(0, (netIncome / income) * 100);
+    const taxPercent = Math.max(0, (tax / income) * 100);
+
+    let html = `
+        <div class="tax-chart-container">
+            <div class="tax-chart-bar">
+                <div class="chart-segment net" style="width: ${netPercent}%"></div>
+                <div class="chart-segment tax" style="width: ${taxPercent}%"></div>
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item"><span class="dot net"></span> <span>${tr('net_income_label')}: ${Math.round(netPercent)}%</span></div>
+                <div class="legend-item"><span class="dot tax"></span> <span>${tr('tax_label')}: ${Math.round(taxPercent)}%</span></div>
+            </div>
+        </div>
+    `;
+    chartContainer.innerHTML = html;
+}
+
+async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWorked, agent, company, taxYear, farmsText, isRefund, lang) {
     try {
         const data = {
             type: 'tax_sync',
@@ -339,8 +372,9 @@ async function sendDataToAppsScript(income, totalTax, taxPaid, refund, monthsWor
             agentOperator: agent,
             companyName: company,
             taxYear: taxYear,
-            farmsText: farmsText, // Pre-formatted text to bypass JSON parsing issues
+            farmsText: farmsText,
             isRefund: isRefund.toString(),
+            lang: lang, // Rule 20: Pass language to backend
             userId: window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'anonymous'
         };
 
@@ -365,7 +399,7 @@ function tr(key) {
 document.addEventListener('DOMContentLoaded', () => {
     // Formatting for initial inputs
     document.querySelectorAll('.farm-income, .farm-tax').forEach(addFormatting);
-    
+
     // Add Farm Button
     const addBtn = document.getElementById('addFarmBtn');
     if (addBtn) addBtn.onclick = addFarmRecord;
@@ -404,18 +438,18 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateLiveSummary() {
     const records = document.querySelectorAll('.farm-record');
     const summaryBlock = document.getElementById('live-calc-summary');
-    
+
     if (records.length <= 1) {
         if (summaryBlock) summaryBlock.classList.add('hidden');
         return;
     }
-    
+
     // Show summary if more than one farm
     if (summaryBlock) summaryBlock.classList.remove('hidden');
-    
+
     let totalIncome = 0;
     let totalTax = 0;
-    
+
     document.querySelectorAll('.farm-income').forEach(input => {
         totalIncome += parseCleanNumber(input.value);
     });
@@ -425,7 +459,7 @@ function updateLiveSummary() {
 
     const incomeEl = document.getElementById('live-total-income');
     const taxEl = document.getElementById('live-total-tax');
-    
+
     if (incomeEl) incomeEl.textContent = formatCurrency(totalIncome);
     if (taxEl) taxEl.textContent = formatCurrency(totalTax);
 }
@@ -445,26 +479,44 @@ function hideResults() {
     if (results) results.classList.add('hidden');
     const promo = document.getElementById('taxServicePromo');
     if (promo) promo.style.display = 'none';
-    
+
     // Contextual: Hide live summary if results are visible? (User might prefer to keep live summary context)
     // For now we keep it visible as it's 'Live'
 }
 
 function resetForm() {
-    if (!confirm(tr('reset_confirm_msg') || 'Are you sure you want to start over?')) return;
-    
+    if (window.Telegram?.WebApp?.showPopup) {
+        window.Telegram.WebApp.showPopup({
+            title: tr('reset_confirm_title') || 'Сброс',
+            message: tr('reset_confirm_msg') || 'Вы уверены, что хотите начать заново?',
+            buttons: [
+                { id: 'reset', type: 'destructive', text: 'Да' },
+                { id: 'cancel', type: 'cancel', text: 'Отмена' }
+            ]
+        }, function (buttonId) {
+            if (buttonId === 'reset') {
+                executeReset();
+            }
+        });
+    } else {
+        if (!confirm(tr('reset_confirm_msg') || 'Are you sure you want to start over?')) return;
+        executeReset();
+    }
+}
+
+function executeReset() {
     triggerHaptic('warning');
-    
+
     // Clear farm list
     const farmList = document.getElementById('farmList');
     farmList.innerHTML = '';
-    
+
     // Add one fresh record
     addFarmRecord();
-    
+
     // Hide results
     hideResults();
-    
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -488,7 +540,7 @@ function initAboutModal() {
             aboutModalEl.classList.remove('hidden');
             document.body.style.overflow = 'hidden'; // Блокируем прокрутку фона
         }
-        
+
         // Haptic feedback
         if (window.Telegram?.WebApp?.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');

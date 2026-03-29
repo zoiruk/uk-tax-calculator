@@ -278,3 +278,54 @@ document.getElementById('monthsWorked').addEventListener('change', hideResults);
 document.getElementById('companyName').addEventListener('input', hideResults);
 document.getElementById('agentOperator').addEventListener('change', hideResults);
 
+// =================================================================================
+// 5. ЛОГИКА МОДАЛЬНОГО ОКНА "О ПРОЕКТЕ"
+// =================================================================================
+
+function initAboutModal() {
+    const aboutLink = document.getElementById('aboutProjectLink');
+    const aboutModal = document.getElementById('aboutModal');
+    const closeAboutBtn = document.getElementById('closeAboutBtn');
+
+    if (!aboutLink || !aboutModal || !closeAboutBtn) return;
+
+    // Открыть модальное окно
+    aboutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const aboutModalEl = document.getElementById('aboutModal');
+        if (aboutModalEl) {
+            aboutModalEl.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Блокируем прокрутку фона
+        }
+        
+        // Haptic feedback
+        if (window.Telegram?.WebApp?.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+        }
+    });
+
+    // Закрыть модальное окно (кнопка)
+    if (closeAboutBtn) {
+        closeAboutBtn.addEventListener('click', () => {
+            const aboutModalEl = document.getElementById('aboutModal');
+            if (aboutModalEl) {
+                aboutModalEl.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+
+    // Закрыть модальное окно (клик по области вне окна)
+    if (aboutModal) {
+        aboutModal.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-overlay')) {
+                aboutModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+}
+
+// Запускаем инициализацию модального окна после загрузки DOM
+document.addEventListener('DOMContentLoaded', initAboutModal);
+

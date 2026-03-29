@@ -1,20 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-    /* MD3 Color Tokens */
-    --md-surface: #ffffff;
-    --md-on-surface: #111827;
-    --md-primary: #3390ec;
-    --md-secondary: #6b7280;
-    --md-outline: #e5e7eb;
+    /* MD3 Color Tokens + Telegram Integration */
+    --md-surface: var(--tg-theme-bg-color, #ffffff);
+    --md-on-surface: var(--tg-theme-text-color, #111827);
+    --md-primary: var(--tg-theme-button-color, #3390ec);
+    --md-on-primary: var(--tg-theme-button-text-color, #ffffff);
+    --md-secondary: var(--tg-theme-hint-color, #6b7280);
+    --md-outline: var(--tg-theme-secondary-bg-color, #e5e7eb);
     
-    --bg-color: #f3f4f6;
-    --container-bg: #ffffff;
-    --text-color: #111827;
-    --hint-color: #6b7280;
-    --link-color: #3390ec;
+    --bg-color: var(--tg-theme-secondary-bg-color, #f3f4f6);
+    --container-bg: var(--tg-theme-bg-color, #ffffff);
+    --text-color: var(--tg-theme-text-color, #111827);
+    --hint-color: var(--tg-theme-hint-color, #6b7280);
+    --link-color: var(--tg-theme-link-color, #3390ec);
 
-    --zoir-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --zoir-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+    --zoir-shadow-deep: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
     --zoir-radius: 16px;
     --zoir-radius-sm: 12px;
 }
@@ -43,8 +45,8 @@ body {
 
 /* ─── Banner ────────────────────────────────────── */
 .banner {
-    background-color: var(--container-bg);
-    padding: 20px 16px;
+    background: linear-gradient(135deg, var(--container-bg) 0%, #f9fafb 100%);
+    padding: 24px 16px;
     text-align: center;
     border-bottom: 1px solid var(--md-outline);
     color: var(--text-color);
@@ -52,9 +54,10 @@ body {
 
 .banner span {
     display: block;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
 .banner small {
@@ -97,13 +100,13 @@ body {
 
 /* ─── Main Container ────────────────────────────── */
 .container {
-    padding: 20px 16px;
-    max-width: 540px;
+    padding: 8px 16px 24px 16px;
+    max-width: 500px;
     margin: 0 auto;
     width: 100%;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .container.visible {
@@ -145,8 +148,8 @@ header {
 .form-section {
     background: var(--container-bg);
     border-radius: var(--zoir-radius);
-    padding: 16px;
-    margin-bottom: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
     box-shadow: var(--zoir-shadow);
     transition: box-shadow var(--duration-medium) ease;
 }
@@ -154,6 +157,71 @@ header {
 .form-group:focus-within,
 .form-section:focus-within {
     box-shadow: var(--zoir-shadow-md);
+}
+
+/* ─── Multi-Farm Layout ─────────────────────────── */
+.farm-record {
+    background: #ffffff;
+    border-radius: var(--zoir-radius-sm);
+    padding: 16px;
+    margin-bottom: 24px;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: var(--zoir-shadow);
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+}
+
+.farm-record-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.farm-number {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--md-primary);
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.remove-btn:active {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.add-btn {
+    background: none;
+    border: 2px dashed var(--md-primary);
+    color: var(--md-primary);
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--zoir-radius-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 4px;
+    font-family: inherit;
+}
+
+.add-btn:active {
+    background: rgba(51, 144, 236, 0.08);
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }
 
 /* ─── Section Title ─────────────────────────────── */
@@ -171,10 +239,10 @@ header {
 /* ─── Labels ────────────────────────────────────── */
 label {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--hint-color);
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-weight: 500;
+    margin-bottom: 4px;
     padding-left: 2px;
 }
 
@@ -223,12 +291,12 @@ input::placeholder {
 .input-group input,
 .input-group select {
     width: 100%;
-    padding: 14px 16px;
+    padding: 10px 12px;
     background: var(--bg-color);
     border: 1px solid rgba(0, 0, 0, 0.05);
     border-radius: var(--zoir-radius-sm);
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     font-family: inherit;
     outline: none;
@@ -239,7 +307,7 @@ input::placeholder {
 }
 
 .input-group {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .input-group:last-child {
@@ -249,7 +317,7 @@ input::placeholder {
 .input-group input:focus,
 .input-group select:focus {
     border-color: rgba(51, 144, 236, 0.4);
-    box-shadow: 0 0 0 3px rgba(51, 144, 236, 0.08);
+    box-shadow: 0 0 0 2px rgba(51, 144, 236, 0.08);
 }
 
 .input-group input:hover,
@@ -270,27 +338,23 @@ input::placeholder {
 button[type="submit"],
 .btn {
     background: linear-gradient(135deg, #3390ec 0%, #2176c7 100%);
-    color: var(--btn-text-color);
-    width: 100%;
+    color: #ffffff;
     border: none;
+    padding: 14px 20px;
     border-radius: var(--zoir-radius);
-    padding: 18px;
     font-size: 16px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 16px rgba(51, 144, 236, 0.25);
+    width: 100%;
+    margin-top: 24px;
+    box-shadow: 0 4px 14px 0 rgba(51, 144, 236, 0.39);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     display: block;
     text-align: center;
-    margin-top: 4px;
     position: relative;
     overflow: hidden;
-    transition: transform var(--duration-short) ease,
-        box-shadow var(--duration-short) ease,
-        opacity var(--duration-short) ease;
     font-family: inherit;
-    letter-spacing: 0;
-    text-transform: none;
 }
 
 button[type="submit"]::after,
@@ -311,9 +375,43 @@ button[type="submit"]:hover::after,
 }
 
 button[type="submit"]:active,
-.btn:active {
-    transform: scale(0.97);
+.btn:active,
+.add-btn:active {
+    transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(51, 144, 236, 0.3);
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 1.5px solid var(--md-outline, #e2e8f0);
+    color: var(--md-secondary, #6b7280);
+    padding: 12px 20px;
+    border-radius: var(--zoir-radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02); /* Soft initial shadow */
+    -webkit-tap-highlight-color: transparent; /* Remove standard blue highlight on mobile */
+    appearance: none;
+}
+
+/* On mobile touch (:active) and desktop hover */
+.secondary-btn:hover,
+.secondary-btn:active {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: var(--md-secondary, #6b7280);
+    transform: translateY(-1px); /* Slight lift even on touch */
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06); /* Glow/Lifting effect visible on tap */
+}
+
+/* Deep press feel */
+.secondary-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    transition: all 0.1s ease; /* Faster response for tap */
 }
 
 button[type="submit"]:disabled,
@@ -361,8 +459,8 @@ button[type="submit"]:disabled,
 .work-summary {
     background: var(--bg-color);
     border-radius: var(--zoir-radius-sm);
-    padding: 14px;
-    margin-bottom: 12px;
+    padding: 10px;
+    margin-bottom: 8px;
     border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
@@ -380,7 +478,7 @@ button[type="submit"]:disabled,
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
     font-size: 0.875rem;
     color: var(--text-color);
@@ -405,7 +503,7 @@ button[type="submit"]:disabled,
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 8px 0;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
     font-size: 0.895rem;
     color: var(--text-color);
@@ -457,9 +555,9 @@ button[type="submit"]:disabled,
 }
 
 .refund-amount {
-    font-size: 2.8rem;
+    font-size: 2.4rem;
     font-weight: 900;
-    margin: 8px 0;
+    margin: 4px 0;
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     animation: bounceIn 0.7s var(--ease-emphasized);
     letter-spacing: -0.02em;
@@ -525,8 +623,8 @@ button[type="submit"]:disabled,
 .tax-breakdown {
     background: var(--bg-color);
     border-radius: var(--zoir-radius-sm);
-    padding: 14px;
-    margin-top: 12px;
+    padding: 10px;
+    margin-top: 10px;
     border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
@@ -534,7 +632,7 @@ button[type="submit"]:disabled,
     font-size: 0.85rem;
     color: var(--hint-color);
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -544,7 +642,7 @@ button[type="submit"]:disabled,
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 9px 0;
+    padding: 6px 0;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
     font-size: 0.85rem;
     color: var(--text-color);
@@ -1118,10 +1216,13 @@ footer,
 }
 
 .about-modal-box {
-    background: var(--md-surface);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 254, 0.4);
     border-radius: 28px; /* MD3 Dialog Radius */
     padding: 24px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
     animation: dialogFadeIn 0.3s ease-out;
     display: flex;
     flex-direction: column;
@@ -1227,4 +1328,74 @@ footer,
 
 .author-link-minimal:hover {
     color: var(--md-primary);
+}
+
+/* ───────────────────────────────────────────────── */
+/*  ULTIMATE UX LAYER (Absolute Perfection)          */
+/* ───────────────────────────────────────────────── */
+
+/* 1. Multi-Farm Live Summary (Compact & High Contrast) */
+.live-summary-compact {
+    background: var(--md-surface, #ffffff);
+    border: 1.5px solid var(--md-outline, #e2e8f0);
+    border-left: 4px solid var(--md-primary, #3390ec); /* Quick accent */
+    border-radius: var(--zoir-radius-sm, 12px);
+    padding: 16px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Soft elevation to avoid blending */
+    animation: fadeInSlide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes fadeInSlide {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.live-sum-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: var(--md-secondary);
+}
+
+.live-sum-item b {
+    color: var(--md-primary);
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* 2. Info Icons & Tooltips */
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: var(--md-outline);
+    color: var(--md-secondary);
+    border-radius: 50%;
+    font-size: 11px;
+    margin-left: 6px;
+    cursor: help;
+    transition: all 0.2s;
+}
+
+.info-icon:hover {
+    background: var(--md-primary);
+    color: white;
+}
+
+/* 4. Onboarding Pulse (Rule 2) */
+.pulse-onboarding {
+    animation: onboardPulse 2s infinite;
+}
+
+@keyframes onboardPulse {
+    0% { box-shadow: 0 0 0 0 rgba(51, 144, 236, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(51, 144, 236, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(51, 144, 236, 0); }
 }

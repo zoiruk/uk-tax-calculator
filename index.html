@@ -21,80 +21,84 @@
 
     <div class="container" id="main-container">
 
-        <!-- Header -->
-        <header>
-            <button type="button" class="lang-btn" id="langBtn" style="margin-top: 0;">
-                🌍 Выберите язык
-            </button>
-        </header>
+        <!-- Language Button (Top-Corner) -->
+        <button type="button" class="lang-btn-corner" id="langBtn">
+            🌍
+        </button>
 
-        <!-- Calculator -->
-        <div class="calculator">
-            <form id="taxForm">
+        <!-- Calculator & Info Content -->
+        <div id="main-content">
+            <!-- Calculator -->
+            <div class="calculator">
+                <form id="taxForm">
 
-                <!-- Multi-Farm Section -->
-                <div class="form-section">
-                    <h3>🏢 <span data-translate="work_info">Информация о работе</span></h3>
-                    
-                    <div id="farmList">
-                        <!-- First farm record (always present) -->
-                        <div class="farm-record">
-                            <div class="farm-record-header">
-                                <span class="farm-number" data-translate="farm_label">Ферма/Компания</span>
-                            </div>
-                            
-                            <div class="input-group">
-                                <label data-translate="tax_year">Налоговый год</label>
-                                <select class="farm-year" required>
-                                    <option value="" data-translate="select_tax_year">Выберите налоговый год</option>
-                                    <option value="2026-27" selected>2026-27</option>
-                                    <option value="2025-26">2025-26</option>
-                                    <option value="2024-25">2024-25</option>
-                                    <option value="2023-24">2023-24</option>
-                                    <option value="2022-23">2022-23</option>
-                                </select>
-                            </div>
+                    <!-- Multi-Farm Section -->
+                    <div class="form-section">
+                        <h3>🏢 <span data-translate="work_info">Информация о работе</span></h3>
 
-                            <div class="input-group">
-                                <label data-translate="company_name">Название компании/фермы</label>
-                                <input type="text" class="farm-name" data-translate-placeholder="company_placeholder"
-                                    placeholder="Введите название компании или фермы" required>
-                            </div>
+                        <div id="farmList">
+                            <!-- First farm record (always present) -->
+                            <div class="farm-record">
+                                <div class="farm-record-header">
+                                    <span class="farm-number" data-translate="farm_label">Ферма/Компания</span>
+                                </div>
 
-                            <div class="input-group">
-                                <label data-translate="agent_operator">Агент/Оператор</label>
-                                <select class="farm-agent" required>
-                                    <option value="" data-translate="select_agent">Выберите агента/оператора</option>
-                                    <option value="Agri-HR">Agri-HR</option>
-                                    <option value="Concordia">Concordia</option>
-                                    <option value="Fruitful Jobs">Fruitful Jobs</option>
-                                    <option value="Pro-Force">Pro-Force</option>
-                                    <option value="HOPS">HOPS</option>
-                                    <option value="Другой" data-translate="other">Другой</option>
-                                </select>
-                            </div>
+                                <div class="input-group">
+                                    <label data-translate="tax_year">Налоговый год</label>
+                                    <select class="farm-year" required>
+                                        <option value="" data-translate="select_tax_year">Выберите налоговый год
+                                        </option>
+                                        <option value="2026-27" selected>2026-27</option>
+                                        <option value="2025-26">2025-26</option>
+                                        <option value="2024-25">2024-25</option>
+                                        <option value="2023-24">2023-24</option>
+                                        <option value="2022-23">2022-23</option>
+                                    </select>
+                                </div>
 
-                            <div class="input-group">
-                                <label>
-                                    <span data-translate="months_worked">Количество месяцев работы</span>
-                                    <span class="info-icon" onclick="showInfo('months_info_text')">ⓘ</span>
-                                </label>
-                                <select class="farm-months" required>
-                                    <option value="" data-translate="select_months">Выберите количество месяцев</option>
-                                    <option value="1">1 месяц</option>
-                                    <option value="2">2 месяца</option>
-                                    <option value="3">3 месяца</option>
-                                    <option value="4" selected>4 месяца</option>
-                                    <option value="5">5 месяцев</option>
-                                    <option value="6">6 месяцев</option>
-                                    <option value="7">7 месяцев</option>
-                                    <option value="8">8 месяцев</option>
-                                    <option value="9">9 месяцев</option>
-                                    <option value="10">10 месяцев</option>
-                                    <option value="11">11 месяцев</option>
-                                    <option value="12">12 месяцев (полный год)</option>
-                                </select>
-                            </div>
+                                <div class="input-group">
+                                    <label data-translate="company_name">Название компании/фермы</label>
+                                    <input type="text" class="farm-name"
+                                        data-translate-placeholder="company_placeholder"
+                                        placeholder="Введите название компании или фермы" required>
+                                </div>
+
+                                <div class="input-group">
+                                    <label data-translate="agent_operator">Агент/Оператор</label>
+                                    <select class="farm-agent" required>
+                                        <option value="" data-translate="select_agent">Выберите агента/оператора
+                                        </option>
+                                        <option value="Agri-HR">Agri-HR</option>
+                                        <option value="Concordia">Concordia</option>
+                                        <option value="Fruitful Jobs">Fruitful Jobs</option>
+                                        <option value="Pro-Force">Pro-Force</option>
+                                        <option value="HOPS">HOPS</option>
+                                        <option value="Другой" data-translate="other">Другой</option>
+                                    </select>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>
+                                        <span data-translate="months_worked">Количество месяцев работы</span>
+                                        <span class="info-icon" onclick="showInfo('months_info_text')">ⓘ</span>
+                                    </label>
+                                    <select class="farm-months" required>
+                                        <option value="" data-translate="select_months">Выберите количество месяцев
+                                        </option>
+                                        <option value="1">1 месяц</option>
+                                        <option value="2">2 месяца</option>
+                                        <option value="3">3 месяца</option>
+                                        <option value="4" selected>4 месяца</option>
+                                        <option value="5">5 месяцев</option>
+                                        <option value="6">6 месяцев</option>
+                                        <option value="7">7 месяцев</option>
+                                        <option value="8">8 месяцев</option>
+                                        <option value="9">9 месяцев</option>
+                                        <option value="10">10 месяцев</option>
+                                        <option value="11">11 месяцев</option>
+                                        <option value="12">12 месяцев (полный год)</option>
+                                    </select>
+                                </div>
 
                                 <div class="input-row">
                                     <div class="input-group">
@@ -102,185 +106,205 @@
                                             <span data-translate="income_period">Доход (£)</span>
                                             <span class="info-icon" onclick="showInfo('income_info_text')">ⓘ</span>
                                         </label>
-                                        <input type="text" class="farm-income" data-translate-placeholder="income_placeholder"
-                                            placeholder="Сумма" inputmode="decimal" required>
+                                        <input type="text" class="farm-income"
+                                            data-translate-placeholder="income_placeholder" placeholder="Сумма"
+                                            inputmode="decimal" required>
                                     </div>
-    
-                                <div class="input-group">
-                                    <label>
-                                        <span data-translate="tax_withheld">Налог (£)</span>
-                                        <span class="info-icon" onclick="showInfo('tax_paid_info_text')">ⓘ</span>
-                                    </label>
-                                    <input type="text" class="farm-tax" data-translate-placeholder="tax_placeholder"
-                                        placeholder="Налог" inputmode="decimal" required>
+
+                                    <div class="input-group">
+                                        <label>
+                                            <span data-translate="tax_withheld">Налог (£)</span>
+                                            <span class="info-icon" onclick="showInfo('tax_paid_info_text')">ⓘ</span>
+                                        </label>
+                                        <input type="text" class="farm-tax" data-translate-placeholder="tax_placeholder"
+                                            placeholder="Налог" inputmode="decimal" required>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Add Farm Button -->
+                        <button type="button" id="addFarmBtn" class="add-btn">
+                            <span data-translate="add_farm_btn">➕ Добавить другое место работы</span>
+                        </button>
                     </div>
 
-                    <!-- Add Farm Button -->
-                    <button type="button" id="addFarmBtn" class="add-btn">
-                        <span data-translate="add_farm_btn">➕ Добавить другое место работы</span>
+                    <!-- Multi-Farm Live Summary -->
+                    <div id="live-calc-summary" class="live-summary-compact hidden">
+                        <div class="live-sum-item">
+                            <span data-translate="total_income_all">Общий доход (все фермы):</span>
+                            <b id="live-total-income">£0.00</b>
+                        </div>
+                        <div class="live-sum-item">
+                            <span data-translate="total_tax_all">Всего удержано налога:</span>
+                            <b id="live-total-tax">£0.00</b>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="calcBtn" data-translate="calculate_button">
+                        🧮 Рассчитать возврат
                     </button>
-                </div>
 
-                <!-- Multi-Farm Live Summary -->
-                <div id="live-calc-summary" class="live-summary-compact hidden">
-                    <div class="live-sum-item">
-                        <span data-translate="total_income_all">Общий доход (все фермы):</span>
-                        <b id="live-total-income">£0.00</b>
+                    <button type="button" id="resetBtn" data-translate="reset_button" class="secondary-btn">
+                        🔄 Начать заново
+                    </button>
+
+                </form>
+
+                <!-- Results -->
+                <div id="results" class="results hidden">
+                    <h2 data-translate="result_title">📊 Результат расчета</h2>
+
+                    <!-- Work Summary -->
+                    <div class="work-summary">
+                        <h3>🏢 <span data-translate="work_summary">Информация о работе</span></h3>
+                        <div class="summary-item">
+                            <span data-translate="company_farm">Компания/Ферма:</span>
+                            <span id="summaryCompany">—</span>
+                        </div>
+                        <div class="summary-item">
+                            <span data-translate="agent_operator_result">Агент/Оператор:</span>
+                            <span id="summaryAgent">—</span>
+                        </div>
+                        <div class="summary-item">
+                            <span data-translate="work_period">Период работы:</span>
+                            <span id="summaryPeriod">—</span>
+                        </div>
                     </div>
-                    <div class="live-sum-item">
-                        <span data-translate="total_tax_all">Всего удержано налога:</span>
-                        <b id="live-total-tax">£0.00</b>
+
+                    <!-- Number breakdown -->
+                    <div class="result-item">
+                        <span data-translate="income_for_period">Доход за период:</span>
+                        <span id="actualIncome">£0</span>
                     </div>
-                </div>
-
-                <button type="submit" id="calcBtn" data-translate="calculate_button">
-                    🧮 Рассчитать возврат
-                </button>
-
-                <button type="button" id="resetBtn" data-translate="reset_button" class="secondary-btn">
-                    🔄 Начать заново
-                </button>
-
-            </form>
-
-            <!-- Results -->
-            <div id="results" class="results hidden">
-                <h2 data-translate="result_title">📊 Результат расчета</h2>
-
-                <!-- Work Summary -->
-                <div class="work-summary">
-                    <h3>🏢 <span data-translate="work_summary">Информация о работе</span></h3>
-                    <div class="summary-item">
-                        <span data-translate="company_farm">Компания/Ферма:</span>
-                        <span id="summaryCompany">—</span>
+                    <div class="result-item">
+                        <span data-translate="tax_due">Налог к доплате:</span>
+                        <span id="taxDue">£0</span>
                     </div>
-                    <div class="summary-item">
-                        <span data-translate="agent_operator_result">Агент/Оператор:</span>
-                        <span id="summaryAgent">—</span>
+                    <div class="result-item">
+                        <span data-translate="tax_paid">Удержанный налог:</span>
+                        <span id="paidTax">£0</span>
                     </div>
-                    <div class="summary-item">
-                        <span data-translate="work_period">Период работы:</span>
-                        <span id="summaryPeriod">—</span>
+
+                    <!-- Tax Chart Visualization Area -->
+                    <div id="taxChartArea"></div>
+
+                    <!-- 🎉 Refund highlight -->
+                    <div id="refundHighlight" class="refund-highlight">
+                        <div class="refund-title" data-translate="refund_title">🎉 Ваш возврат от HMRC</div>
+                        <div class="refund-amount" id="refundAmount">£0</div>
+                        <div class="refund-subtitle" data-translate="refund_disclaimer">
+                            Этот расчет является ориентировочным. Точная сумма будет подтверждена HMRC.
+                        </div>
                     </div>
-                </div>
 
-                <!-- Number breakdown -->
-                <div class="result-item">
-                    <span data-translate="income_for_period">Доход за период:</span>
-                    <span id="actualIncome">£0</span>
-                </div>
-                <div class="result-item">
-                    <span data-translate="tax_due">Налог к доплате:</span>
-                    <span id="taxDue">£0</span>
-                </div>
-                <div class="result-item">
-                    <span data-translate="tax_paid">Удержанный налог:</span>
-                    <span id="paidTax">£0</span>
-                </div>
-
-                <!-- Tax Chart Visualization Area -->
-                <div id="taxChartArea"></div>
-
-                <!-- 🎉 Refund highlight -->
-                <div id="refundHighlight" class="refund-highlight">
-                    <div class="refund-title" data-translate="refund_title">🎉 Ваш возврат от HMRC</div>
-                    <div class="refund-amount" id="refundAmount">£0</div>
-                    <div class="refund-subtitle" data-translate="refund_disclaimer">
-                        Этот расчет является ориентировочным. Точная сумма будет подтверждена HMRC.
+                    <!-- ⚠️ Payment due (hidden by default) -->
+                    <div class="result-item highlight" id="paymentItem" style="display: none;">
+                        <span data-translate="payment_hmrc">Доплата в HMRC:</span>
+                        <span id="paymentAmount">£0</span>
                     </div>
-                </div>
 
-                <!-- ⚠️ Payment due (hidden by default) -->
-                <div class="result-item highlight" id="paymentItem" style="display: none;">
-                    <span data-translate="payment_hmrc">Доплата в HMRC:</span>
-                    <span id="paymentAmount">£0</span>
-                </div>
-
-                <!-- Tax Breakdown -->
-                <div class="tax-breakdown">
-                    <h3>📐 <span data-translate="tax_breakdown">Детализация налога</span></h3>
-                    <div id="taxBreakdown"></div>
-                </div>
-
-                <!-- 💼 Promo / service block -->
-                <div id="taxServicePromo" class="tax-service-promo" style="display: none;">
-                    <div class="promo-header">
-                        <h3 data-translate="promo_title">💼 Нужна помощь с возвратом налогов?</h3>
-                        <p data-translate="promo_subtitle">Получите профессиональную помощь для возврата налогов</p>
+                    <!-- Tax Breakdown -->
+                    <div class="tax-breakdown">
+                        <h3>📐 <span data-translate="tax_breakdown">Детализация налога</span></h3>
+                        <div id="taxBreakdown"></div>
                     </div>
-                    <div class="promo-content">
-                        <div class="service-info">
-                            <h4>White Tax Returns</h4>
-                            <div class="service-features">
-                                <div class="feature">
-                                    <span class="feature-icon">✅</span>
-                                    <span>
-                                        <a href="https://find-and-update.company-information.service.gov.uk/company/14317468"
-                                            target="_blank" class="company-link" data-translate="company_registered">
-                                            Официальное зарегистрированное налоговое агентство
-                                        </a>
-                                    </span>
-                                </div>
-                                <div class="feature">
-                                    <span class="feature-icon">🤝</span>
-                                    <span data-translate="company_partner">Официальный бухгалтерский отдел Fruitful Jobs
-                                        и Agri-HR</span>
-                                </div>
-                                <div class="feature">
-                                    <span class="feature-icon">📋</span>
-                                    <span data-translate="full_support">Полное сопровождение подачи декларации в
-                                        HMRC</span>
-                                </div>
-                                <div class="feature">
-                                    <span class="feature-icon">💰</span>
-                                    <span data-translate="max_refund">Максимальный возврат налогов</span>
+
+                    <!-- 💼 Promo / service block -->
+                    <div id="taxServicePromo" class="tax-service-promo" style="display: none;">
+                        <div class="promo-header">
+                            <h3 data-translate="promo_title">💼 Нужна помощь с возвратом налогов?</h3>
+                            <p data-translate="promo_subtitle">Получите профессиональную помощь для возврата налогов</p>
+                        </div>
+                        <div class="promo-content">
+                            <div class="service-info">
+                                <h4>White Tax Returns</h4>
+                                <div class="service-features">
+                                    <div class="feature">
+                                        <span class="feature-icon">✅</span>
+                                        <span>
+                                            <a href="https://find-and-update.company-information.service.gov.uk/company/14317468"
+                                                target="_blank" class="company-link"
+                                                data-translate="company_registered">
+                                                Официальное зарегистрированное налоговое агентство
+                                            </a>
+                                        </span>
+                                    </div>
+                                    <div class="feature">
+                                        <span class="feature-icon">🤝</span>
+                                        <span data-translate="company_partner">Официальный бухгалтерский отдел Fruitful
+                                            Jobs
+                                            и Agri-HR</span>
+                                    </div>
+                                    <div class="feature">
+                                        <span class="feature-icon">📋</span>
+                                        <span data-translate="full_support">Полное сопровождение подачи декларации в
+                                            HMRC</span>
+                                    </div>
+                                    <div class="feature">
+                                        <span class="feature-icon">💰</span>
+                                        <span data-translate="max_refund">Максимальный возврат налогов</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="promo-cta">
-                            <a href="https://whitetax.site/uzbekistan" target="_blank" class="cta-button"
-                                id="whitetaxBtn">
-                                <span data-translate="apply_button">👉 Подать заявку</span>
-                                <small>whitetax.site/uzbekistan</small>
-                            </a>
+                            <div class="promo-cta">
+                                <a href="https://whitetax.site/uzbekistan" target="_blank" class="cta-button"
+                                    id="whitetaxBtn">
+                                    <span data-translate="apply_button">👉 Подать заявку</span>
+                                    <small>whitetax.site/uzbekistan</small>
+                                </a>
+                            </div>
                         </div>
                     </div>
+
                 </div>
+                <!-- /results -->
 
             </div>
-            <!-- /results -->
+            <!-- /calculator -->
 
+            <!-- info-accordion consolidated -->
+            <div class="info-accordion" style="margin-top: 2px;margin-bottom: 2px;">
+                <!-- Tax Rates Info -->
+            <details class="md3-details" style="margin-top: 20px;">
+                <summary>
+                    <div class="summary-title">
+                        <span style="font-size: 1.1rem; margin-right: 6px;">ℹ️</span>
+                        <h3 data-translate="tax_rates_title" style="margin: 0; flex: 1;">Налоговые ставки UK
+                            (2025-26)</h3>
+                    </div>
+                    <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </summary>
+                <div class="details-content">
+                    <ul class="info-list">
+                        <li data-translate="personal_allowance">Необлагаемый минимум: <b>£12,570</b></li>
+                        <li data-translate="basic_rate">Базовая ставка 20%: £12,571 — £50,270</li>
+                        <li data-translate="higher_rate">Повышенная ставка 40%: £50,271 — £125,140</li>
+                        <li data-translate="additional_rate">Дополнительная ставка 45%: свыше £125,140</li>
+                    </ul>
+                </div>
+            </details>
         </div>
-        <!-- /calculator -->
 
-        <!-- Tax Rates Info -->
-        <div class="info">
-            <h3>ℹ️ <span data-translate="tax_rates_title">Налоговые ставки UK (2025-26)</span></h3>
-            <ul>
-                <li data-translate="personal_allowance">Необлагаемый минимум: <b>£12,570</b></li>
-                <li data-translate="basic_rate">Базовая ставка 20%: £12,571 — £50,270</li>
-                <li data-translate="higher_rate">Повышенная ставка 40%: £50,271 — £125,140</li>
-                <li data-translate="additional_rate">Дополнительная ставка 45%: свыше £125,140</li>
-            </ul>
+            <!-- Footer -->
+            <footer class="footer" style="padding-top: 0px;padding-bottom: 0px;">
+                <div class="partnership-info footer-info">
+                    <span data-translate="partnership_short">Этот инструмент разработан для расчета суммы возврата
+                        подоходного налога в Великобритании.</span>
+                    <a href="#" id="aboutProjectLink" data-translate="about_project_link">Подробнее о проекте</a>.
+                </div>
+                <div class="footer-minimal">
+                    <span class="author-label" data-translate="developed_by">Разработка цифровых решений —</span>
+                    <a href="https://t.me/Zoir_UK" target="_blank" class="author-link-minimal">
+                        <span>👨‍💻 Zoir_UK</span>
+                    </a>
+                </div>
+            </footer>
         </div>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="partnership-info footer-info">
-                <span data-translate="partnership_short">Этот инструмент разработан для расчета суммы возврата
-                    подоходного налога в Великобритании.</span>
-                <a href="#" id="aboutProjectLink" data-translate="about_project_link">Подробнее о проекте</a>.
-            </div>
-            <div class="footer-minimal">
-                <span class="author-label" data-translate="developed_by">Разработано:</span>
-                <a href="https://t.me/Zoir_UK" target="_blank" class="author-link-minimal">
-                    <span>👨‍💻 Zoir_UK</span>
-                </a>
-            </div>
-        </footer>
+        <!-- /main-content -->
 
     </div>
     <!-- /container -->

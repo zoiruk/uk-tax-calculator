@@ -5,13 +5,13 @@
 // ⚠️ ЗАМЕНИТЕ ЭТОТ URL НА АКТУАЛЬНЫЙ URL ВАШЕГО РАЗВЕРНУТОГО GOOGLE APPS SCRIPT
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqdaSVyuWC7Kr2q4wmIu-WVJnh97sAEcgVFs9MVmV2sL8JSzgGtnM8IyYvfpIP_6Wz/exec';
 
-// Налоговые пороги для разных лет (UK Tax Bands)
+// Налоговые пороги для разных лет (UK Tax Bands) + NMW + Accommodation Offset
 const taxBands = {
-    '2026-27': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
-    '2025-26': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
-    '2024-25': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
-    '2023-24': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 } },
-    '2022-23': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 150000, rate: 0.40 }, additionalRate: { min: 150001, rate: 0.45 } }
+    '2026-27': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 }, nmw: 12.21, accom: 10.66 },
+    '2025-26': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 }, nmw: 12.21, accom: 10.66 },
+    '2024-25': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 }, nmw: 11.44, accom: 9.99 },
+    '2023-24': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 125140, rate: 0.40 }, additionalRate: { min: 125141, rate: 0.45 }, nmw: 10.42, accom: 9.10 },
+    '2022-23': { personalAllowance: 12570, basicRate: { min: 12571, max: 50270, rate: 0.20 }, higherRate: { min: 50271, max: 150000, rate: 0.40 }, additionalRate: { min: 150001, rate: 0.45 }, nmw: 9.50, accom: 8.70 }
 };
 
 // Инициализация Telegram Web App
@@ -132,8 +132,16 @@ function addFarmRecord() {
     newRecord.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
 
     // Add remove button if not exists
-    let header = newRecord.querySelector('.farm-record-header');
-    if (!header.querySelector('.remove-btn')) {
+    let headerRight = newRecord.querySelector('.farm-header-right');
+    if (!headerRight) {
+        // Fallback for older DOMs
+        headerRight = document.createElement('div');
+        headerRight.className = 'farm-header-right';
+        headerRight.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+        newRecord.querySelector('.farm-record-header').appendChild(headerRight);
+    }
+    
+    if (!headerRight.querySelector('.remove-btn')) {
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.className = 'remove-btn';
@@ -144,7 +152,7 @@ function addFarmRecord() {
             updateFarmNumbers();
             hideResults();
         };
-        header.appendChild(removeBtn);
+        headerRight.appendChild(removeBtn);
     }
 
     container.appendChild(newRecord);
@@ -266,6 +274,9 @@ function renderFinalResults(yearsMap, farmsData, totalIncome, totalTaxDue, total
 
     const refund = totalTaxPaid - totalTaxDue;
     const commonYear = farmsData[0].year; // Primary year for summary
+
+    // Save to Telegram CloudStorage
+    saveHistoryToCloud();
 
     // Update Summary Header
     document.getElementById('summaryCompany').textContent = farmsData.map(f => f.name).join(' & ');
@@ -393,10 +404,154 @@ function tr(key) {
     return (translations[lang] && translations[lang][key]) ? translations[lang][key] : key;
 }
 
+// =================================================================================
+// 7. OCR PAYSLIP SCANNER (Tesseract.js)
+// =================================================================================
+
+async function handleOcrScan(fileInput) {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const recordNode = fileInput.closest('.farm-record');
+    const btn = recordNode.querySelector('.scan-btn');
+    const textSpan = btn.querySelector('.scan-text');
+    const originalText = textSpan.textContent;
+
+    // UI Feedback: Loading state
+    btn.classList.add('scanning');
+    textSpan.textContent = tr('scanning_wait');
+    triggerHaptic('medium');
+
+    try {
+        let extractedText = '';
+
+        if (file.type === 'application/pdf') {
+            if (typeof pdfjsLib === 'undefined') throw new Error('PDF.js not loaded');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+            
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            
+            let fullText = [];
+            for (let pageNum = 1; pageNum <= Math.min(pdf.numPages, 2); pageNum++) { // Only check first 2 pages for safety
+                const page = await pdf.getPage(pageNum);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join('\n');
+                fullText.push(pageText);
+            }
+            extractedText = fullText.join('\n');
+            console.log('--- PDF Result ---', extractedText);
+        } else {
+            if (typeof Tesseract === 'undefined') throw new Error('Tesseract is not loaded');
+            // Run Tesseract OCR on Image
+            const { data: { text } } = await Tesseract.recognize(file, 'eng');
+            extractedText = text;
+            console.log('--- OCR Result ---', extractedText);
+        }
+
+        // Parse Text
+        let parsedIncome = null;
+        let parsedTax = null;
+
+        // Basic clean up of OCR output
+        const lines = extractedText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].toLowerCase();
+            
+            // regex to extract numbers like 1234.56, 1,234.56 or 1234
+            const extractNum = (str) => {
+                const match = str.match(/(?:£\s*)?([\d]{1,3}(?:[.,][\d]{3})*(?:[.,][\d]{2}))/);
+                return match ? parseCleanNumber(match[1]) : null;
+            };
+            
+            // Income Keywords
+            if (line.includes('total pay') || line.includes('gross pay') || line.includes('taxable pay') || line.includes('gross for tax') || line.includes('total gross')) {
+                const val = extractNum(line);
+                if (val !== null) parsedIncome = val;
+                else if (i + 1 < lines.length) {
+                    const nextVal = extractNum(lines[i+1]);
+                    if (nextVal !== null) parsedIncome = nextVal;
+                }
+            }
+
+            // Tax Keywords
+            if (line.includes('tax paid') || line.includes('paye') || line.includes('income tax') || line.includes('tax ytd') || line.includes('tax deducted')) {
+                const val = extractNum(line);
+                if (val !== null) parsedTax = val;
+                else if (i + 1 < lines.length) {
+                    const nextVal = extractNum(lines[i+1]);
+                    if (nextVal !== null) parsedTax = nextVal;
+                }
+            }
+        }
+
+        if (parsedIncome !== null || parsedTax !== null) {
+            const incomeInput = recordNode.querySelector('.farm-income');
+            const taxInput = recordNode.querySelector('.farm-tax');
+            
+            if (parsedIncome !== null && incomeInput) {
+                incomeInput.value = parsedIncome;
+                formatNumberInput(incomeInput);
+            }
+            if (parsedTax !== null && taxInput) {
+                taxInput.value = parsedTax;
+                formatNumberInput(taxInput);
+            }
+            
+            triggerHaptic('success');
+            hideResults();
+            updateLiveSummary();
+            
+            textSpan.textContent = tr('scan_success');
+            btn.classList.add('success');
+            setTimeout(() => {
+                btn.classList.remove('scanning', 'success');
+                textSpan.textContent = tr('scan_payslip'); // revert but keep success
+            }, 3000);
+            
+        } else {
+            throw new Error('No relevant data found');
+        }
+
+    } catch (err) {
+        console.error('OCR Error:', err);
+        triggerHaptic('error');
+        showInfo('scan_error');
+        btn.classList.remove('scanning');
+        textSpan.textContent = originalText;
+    }
+    
+    fileInput.value = ''; // Reset for next scan
+}
+
 /**
  * Event Listeners
  */
 document.addEventListener('DOMContentLoaded', () => {
+    // ─── Tab Switching Logic ───
+    const tabs = document.querySelectorAll('.md3-tab');
+    const views = document.querySelectorAll('.view-section');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            views.forEach(v => {
+                v.classList.remove('active');
+                v.style.display = 'none';
+            });
+            tab.classList.add('active');
+            
+            const targetId = tab.getAttribute('data-target');
+            const targetView = document.getElementById(targetId);
+            if (targetView) {
+                targetView.style.display = 'block';
+                setTimeout(() => targetView.classList.add('active'), 10);
+            }
+            triggerHaptic('light'); // Native feeling
+        });
+    });
+
     // Formatting for initial inputs
     document.querySelectorAll('.farm-income, .farm-tax').forEach(addFormatting);
 
@@ -404,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.getElementById('addFarmBtn');
     if (addBtn) addBtn.onclick = addFarmRecord;
 
-    // Form submission
+    // Form submission Calculator
     const form = document.getElementById('taxForm');
     if (form) {
         form.onsubmit = (e) => {
@@ -412,6 +567,13 @@ document.addEventListener('DOMContentLoaded', () => {
             displayResults();
         };
     }
+
+    // Delegated listener for OCR File Inputs (Only Tab 1)
+    document.addEventListener('change', (e) => {
+        if (e.target.classList.contains('ocr-file-input')) {
+            handleOcrScan(e.target);
+        }
+    });
 
     // Live Updates & Results hiding
     document.addEventListener('input', (e) => {
@@ -433,6 +595,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
 
     initAboutModal();
+
+    // Load saved history if available
+    loadHistoryFromCloud();
 });
 
 function updateLiveSummary() {
@@ -507,18 +672,104 @@ function resetForm() {
 function executeReset() {
     triggerHaptic('warning');
 
-    // Clear farm list
     const farmList = document.getElementById('farmList');
-    farmList.innerHTML = '';
-
-    // Add one fresh record
-    addFarmRecord();
-
-    // Hide results
+    const records = farmList.querySelectorAll('.farm-record');
+    
+    // Remove all records except the first one
+    for (let i = 1; i < records.length; i++) {
+        records[i].remove();
+    }
+    
+    // Clear the first record's inputs
+    if (records[0]) {
+        records[0].querySelectorAll('input').forEach(input => input.value = '');
+        records[0].querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+    }
+    
+    updateFarmNumbers();
     hideResults();
+    updateLiveSummary();
+    
+    // Clear CloudStorage history
+    if (window.Telegram?.WebApp?.CloudStorage) {
+         window.Telegram.WebApp.CloudStorage.removeItem('tax_history');
+    }
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =================================================================================
+// 6. СОХРАНЕНИЕ ИСТОРИИ (TELEGRAM CLOUD STORAGE)
+// =================================================================================
+
+function loadHistoryFromCloud() {
+    if (window.Telegram?.WebApp?.CloudStorage) {
+        window.Telegram.WebApp.CloudStorage.getItem('tax_history', (err, value) => {
+            if (!err && value) {
+                try {
+                    const history = JSON.parse(value);
+                    if (Array.isArray(history) && history.length > 0) {
+                        populateFormWithHistory(history);
+                    }
+                } catch(e) { console.error('Error parsing tax history', e); }
+            }
+        });
+    }
+}
+
+function populateFormWithHistory(history) {
+    // Ensure we have enough records UI
+    while(document.querySelectorAll('.farm-record').length < history.length) {
+        addFarmRecord();
+    }
+    
+    // Now fill them
+    const updatedRecords = document.querySelectorAll('.farm-record');
+    history.forEach((data, index) => {
+        const record = updatedRecords[index];
+        if(!record) return;
+        
+        if (data.year) record.querySelector('.farm-year').value = data.year;
+        if (data.name && data.name !== tr('not_specified')) record.querySelector('.farm-name').value = data.name;
+        if (data.agent && data.agent !== tr('not_specified')) record.querySelector('.farm-agent').value = data.agent;
+        if (data.months) record.querySelector('.farm-months').value = data.months;
+        
+        const incomeInput = record.querySelector('.farm-income');
+        if (data.income && data.income > 0) incomeInput.value = data.income;
+        const taxInput = record.querySelector('.farm-tax');
+        if (data.taxPaid && data.taxPaid > 0) taxInput.value = data.taxPaid;
+        
+        formatNumberInput(incomeInput);
+        formatNumberInput(taxInput);
+    });
+    
+    updateLiveSummary();
+}
+
+function saveHistoryToCloud() {
+    const farmRecords = document.querySelectorAll('.farm-record');
+    let history = [];
+    farmRecords.forEach(record => {
+        const year = record.querySelector('.farm-year').value;
+        const name = record.querySelector('.farm-name').value.trim();
+        const agent = record.querySelector('.farm-agent').value;
+        const months = record.querySelector('.farm-months').value;
+        const income = parseCleanNumber(record.querySelector('.farm-income').value);
+        const taxPaid = parseCleanNumber(record.querySelector('.farm-tax').value);
+        
+        if (income > 0) {
+            history.push({ year, name, agent, months, income, taxPaid });
+        }
+    });
+
+    if (window.Telegram?.WebApp?.CloudStorage) {
+        if (history.length > 0) {
+            window.Telegram.WebApp.CloudStorage.setItem('tax_history', JSON.stringify(history));
+        } else {
+            window.Telegram.WebApp.CloudStorage.removeItem('tax_history');
+        }
+    }
 }
 
 // =================================================================================
